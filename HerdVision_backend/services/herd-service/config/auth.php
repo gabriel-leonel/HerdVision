@@ -1,7 +1,5 @@
 <?php
 
-use App\Models\User;
-
 return [
 
     /*
@@ -64,7 +62,9 @@ return [
     'providers' => [
         'users' => [
             'driver' => 'eloquent',
-            'model' => env('AUTH_MODEL', User::class),
+            // Serviço stateless: não há tabela de usuários aqui. A identidade vem do JWT
+            // emitido pelo auth-service (ver App\Http\Middleware\AuthenticateJwt, quando presente).
+            'model' => env('AUTH_MODEL'),
         ],
 
         // 'users' => [

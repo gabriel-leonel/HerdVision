@@ -67,5 +67,8 @@ Resposta de `register`/`login`:
 | `JWT_ISSUER` | Valor do claim `iss` (padrão: `APP_URL`). Deve ser igual em todos os serviços |
 | `JWT_TTL` | Validade em minutos (padrão 60) |
 | `JWT_LEEWAY` | Tolerância de relógio em segundos (padrão 10) |
+| `CORS_ALLOWED_ORIGINS` | Origens do frontend, separadas por vírgula (padrão `http://localhost:5173`) |
 
 `storage/jwt/` está no `.gitignore`: **nunca versione a chave privada**.
+
+Os demais serviços validam o token com a **chave pública** (`storage/jwt/public.pem`) e devem usar o mesmo `JWT_ISSUER` (veja o README do [herd-service](../herd-service/README.md)).
