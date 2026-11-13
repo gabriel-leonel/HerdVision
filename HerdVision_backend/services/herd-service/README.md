@@ -54,6 +54,22 @@ Envie `Authorization: Bearer <access_token>` (obtido em `POST /api/auth/login` n
 - O **perfil (`role`) vem do token** e vale até ele expirar. No auth-service o perfil é lido do banco; aqui não há banco de usuários.
 - O **logout** revoga o token só no auth-service. Este serviço não enxerga a lista de revogação, então um token já revogado continua aceito aqui até expirar. O TTL do token é curto (`JWT_TTL`, padrão 60 min no auth-service).
 
+## Endpoints
+
+Todos exigem `Authorization: Bearer <token>`. Respostas de erro seguem `{"message": "..."}` (e `errors` nos 422).
+
+### Lotes (`/api/lots`)
+
+| Método | Rota | Quem pode | Descrição |
+|---|---|---|---|
+| GET | `/api/lots` | admin, user | Lista com `search` (nome/descrição), `per_page` (1–100, padrão 15) e paginação. Cada lote traz `animals_count` |
+| GET | `/api/lots/{id}` | admin, user | Consulta um lote |
+| POST | `/api/lots` | admin, user | Cria. Campos: `name` (obrigatório, máx. 255), `description` (opcional) |
+| PUT/PATCH | `/api/lots/{id}` | admin, user | Atualização parcial: só os campos enviados mudam (`"description": null` limpa a descrição) |
+| DELETE | `/api/lots/{id}` | **admin** | Exclui (204). Lote com animais responde **409** com `animals_count` |
+
+Códigos: `401` sem token ou token inválido · `403` perfil sem permissão · `404` lote inexistente · `409` lote com animais · `422` validação.
+
 ## Banco de dados
 
 SQLite próprio (`database/database.sqlite`), sem chaves estrangeiras para outros serviços.
