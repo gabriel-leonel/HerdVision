@@ -56,6 +56,16 @@ abstract class TestCase extends BaseTestCase
         return JWT::encode($claims, $privateKey ?? self::$keys['private'], $algo);
     }
 
+    protected function asAdmin(): static
+    {
+        return $this->withToken($this->tokenFor(['role' => 'admin']));
+    }
+
+    protected function asUser(): static
+    {
+        return $this->withToken($this->tokenFor(['role' => 'user']));
+    }
+
     protected function publicKey(): string
     {
         return self::$keys['public'];
