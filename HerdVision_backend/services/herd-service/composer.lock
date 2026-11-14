@@ -4,7 +4,7 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#installing-dependencies",
         "This file is @generated automatically"
     ],
-    "content-hash": "737450d0ac952a7e9de88c9c41d16b70",
+    "content-hash": "6f2c3583078bbd6ad5e39bf4fc5288e8",
     "packages": [
         {
             "name": "brick/math",
@@ -516,12 +516,12 @@
             "version": "v7.2.1",
             "source": {
                 "type": "git",
-                "url": "https://github.com/firebase/php-jwt.git",
+                "url": "https://github.com/googleapis/php-jwt.git",
                 "reference": "0501f5729b9e2448516674aff07c7d1727869b8e"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/firebase/php-jwt/zipball/0501f5729b9e2448516674aff07c7d1727869b8e",
+                "url": "https://api.github.com/repos/googleapis/php-jwt/zipball/0501f5729b9e2448516674aff07c7d1727869b8e",
                 "reference": "0501f5729b9e2448516674aff07c7d1727869b8e",
                 "shasum": ""
             },
@@ -547,9 +547,9 @@
             "extra": {
                 "component": {
                     "id": "jwt",
-                    "target": "googleapis/php-jwt.git",
                     "path": "Jwt",
-                    "entry": "README.md"
+                    "entry": "README.md",
+                    "target": "googleapis/php-jwt.git"
                 }
             },
             "autoload": {
@@ -557,6 +557,7 @@
                     "Firebase\\JWT\\": "src"
                 }
             },
+            "notification-url": "https://packagist.org/downloads/",
             "license": [
                 "BSD-3-Clause"
             ],
@@ -578,6 +579,10 @@
                 "jwt",
                 "php"
             ],
+            "support": {
+                "issues": "https://github.com/googleapis/php-jwt/issues",
+                "source": "https://github.com/googleapis/php-jwt/tree/v7.2.1"
+            },
             "time": "2026-09-28T17:51:46+00:00"
         },
         {
@@ -8634,12 +8639,12 @@
     ],
     "aliases": [],
     "minimum-stability": "stable",
-    "stability-flags": [],
+    "stability-flags": {},
     "prefer-stable": true,
     "prefer-lowest": false,
     "platform": {
         "php": "^8.3"
     },
-    "platform-dev": [],
+    "platform-dev": {},
     "plugin-api-version": "2.6.0"
 }
