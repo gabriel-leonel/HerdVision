@@ -1,0 +1,63 @@
+/* HerdVision — tokens de design (DESIGN.md §3 a §5). Use somente estes valores nos componentes. */
+:root {
+  /* Verde Floresta — marca e ações principais */
+  --forest-900: #1f3324;
+  --forest-700: #2f4a33;
+  --forest-500: #54784b;
+  --forest-300: #a3b98f;
+  --forest-100: #e1e9d6;
+
+  /* Argila — destaque e calor */
+  --clay-700: #8f4a25;
+  --clay-500: #b5683a;
+  --clay-300: #e0ae8c;
+  --clay-100: #f6e2d3;
+
+  /* Ocre — atenção (nunca como cor de texto sobre fundo claro) */
+  --ochre-500: #d9a441;
+  --ochre-100: #faefd0;
+
+  /* Areia — fundos e superfícies */
+  --sand-50: #fbf7ee;
+  --sand-100: #f5eedf;
+  --sand-200: #e9dfc9;
+  --sand-300: #d2c4a6;
+
+  /* Casca — textos */
+  --bark-900: #2b2118;
+  --bark-700: #4a3b2d;
+  --bark-500: #7a6a58;
+
+  /* Status */
+  --red-700: #8e2b20;
+  --red-600: #b23a2a;
+  --red-100: #f8ddd6;
+  --sky-600: #3f7482;
+  --sky-100: #dcebee;
+
+  --white: #ffffff;
+  --scrim: rgba(31, 51, 36, 0.55);
+
+  /* Tipografia */
+  --font-serif: 'Fraunces', Georgia, 'Times New Roman', serif;
+  --font-sans: 'DM Sans', system-ui, -apple-system, 'Segoe UI', Roboto, Arial, sans-serif;
+
+  /* Raios */
+  --radius-8: 8px;
+  --radius-12: 12px;
+  --radius-16: 16px;
+  --radius-24: 24px;
+  --radius-pill: 999px;
+
+  /* Elevação — sempre em tom casca */
+  --elevation-1: 0 1px 2px rgba(43, 33, 24, 0.06);
+  --elevation-2: 0 12px 32px rgba(43, 33, 24, 0.14), 0 2px 6px rgba(43, 33, 24, 0.08);
+
+  /* Layout */
+  --sidebar-width: 256px;
+  --content-max: 1180px;
+
+  /* Movimento */
+  --ease: cubic-bezier(0.2, 0, 0, 1);
+  --dur: 180ms;
+}
