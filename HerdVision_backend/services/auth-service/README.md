@@ -1,58 +1,74 @@
-<p align="center"><a href="https://laravel.com" target="_blank"><img src="https://raw.githubusercontent.com/laravel/art/master/logo-lockup/5%20SVG/2%20CMYK/1%20Full%20Color/laravel-logolockup-cmyk-red.svg" width="400" alt="Laravel Logo"></a></p>
+# HerdVision — Auth Service (MS1)
 
-<p align="center">
-<a href="https://github.com/laravel/framework/actions"><img src="https://github.com/laravel/framework/workflows/tests/badge.svg" alt="Build Status"></a>
-<a href="https://packagist.org/packages/laravel/framework"><img src="https://img.shields.io/packagist/dt/laravel/framework" alt="Total Downloads"></a>
-<a href="https://packagist.org/packages/laravel/framework"><img src="https://img.shields.io/packagist/v/laravel/framework" alt="Latest Stable Version"></a>
-<a href="https://packagist.org/packages/laravel/framework"><img src="https://img.shields.io/packagist/l/laravel/framework" alt="License"></a>
-</p>
+Microsserviço de **identidade**: cadastro, login, emissão de **JWT (RS256)**, perfis (`admin` / `user`) e gestão de usuários.
 
-## About Laravel
-
-Laravel is a web application framework with expressive, elegant syntax. We believe development must be an enjoyable and creative experience to be truly fulfilling. Laravel takes the pain out of development by easing common tasks used in many web projects, such as:
-
-- [Simple, fast routing engine](https://laravel.com/docs/routing).
-- [Powerful dependency injection container](https://laravel.com/docs/container).
-- Multiple back-ends for [session](https://laravel.com/docs/session) and [cache](https://laravel.com/docs/cache) storage.
-- Expressive, intuitive [database ORM](https://laravel.com/docs/eloquent).
-- Database agnostic [schema migrations](https://laravel.com/docs/migrations).
-- [Robust background job processing](https://laravel.com/docs/queues).
-- [Real-time event broadcasting](https://laravel.com/docs/broadcasting).
-
-Laravel is accessible, powerful, and provides tools required for large, robust applications.
-
-## Learning Laravel
-
-Laravel has the most extensive and thorough [documentation](https://laravel.com/docs) and video tutorial library of all modern web application frameworks, making it a breeze to get started with the framework.
-
-In addition, [Laracasts](https://laracasts.com) contains thousands of video tutorials on a range of topics including Laravel, modern PHP, unit testing, and JavaScript. Boost your skills by digging into our comprehensive video library.
-
-You can also watch bite-sized lessons with real-world projects on [Laravel Learn](https://laravel.com/learn), where you will be guided through building a Laravel application from scratch while learning PHP fundamentals.
-
-## Agentic Development
-
-Laravel's predictable structure and conventions make it ideal for AI coding agents like Claude Code, Cursor, and GitHub Copilot. Install [Laravel Boost](https://laravel.com/docs/ai) to supercharge your AI workflow:
+## Executar localmente
 
 ```bash
-composer require laravel/boost --dev
-
-php artisan boost:install
+composer install
+cp .env.example .env
+php artisan key:generate
+touch database/database.sqlite
+php artisan jwt:generate-keys      # gera storage/jwt/private.pem e public.pem
+php artisan migrate --seed
+php artisan serve                  # http://localhost:8000
 ```
 
-Boost provides your agent 15+ tools and skills that help agents build Laravel applications while following best practices.
+Testes: `php artisan test` · Estilo: `vendor/bin/pint --test`
 
-## Contributing
+## Usuários de demonstração (seeder)
 
-Thank you for considering contributing to the Laravel framework! The contribution guide can be found in the [Laravel documentation](https://laravel.com/docs/contributions).
+| Perfil | E-mail | Senha |
+|---|---|---|
+| admin | `admin@herdvision.com` | `Admin@1234` |
+| user | `user@herdvision.com` | `User@1234` |
 
-## Code of Conduct
+> Senhas públicas, somente para ambiente local/avaliação. Não execute o seeder em produção.
 
-In order to ensure that the Laravel community is welcoming to all, please review and abide by the [Code of Conduct](https://laravel.com/docs/contributions#code-of-conduct).
+## Endpoints
 
-## Security Vulnerabilities
+| Método | Rota | Acesso | Descrição |
+|---|---|---|---|
+| POST | `/api/auth/register` | público | Cria conta (sempre com perfil `user`) e devolve o JWT |
+| POST | `/api/auth/login` | público | Autentica e devolve o JWT |
+| GET | `/api/auth/me` | autenticado | Dados do usuário logado |
+| POST | `/api/auth/logout` | autenticado | Revoga o token atual |
+| GET | `/api/users` | **admin** | Lista usuários. Query: `search`, `role`, `per_page` (1–100) |
 
-If you discover a security vulnerability within Laravel, please send an e-mail to Taylor Otwell via [taylor@laravel.com](mailto:taylor@laravel.com). All security vulnerabilities will be promptly addressed.
+Autenticação: `Authorization: Bearer <access_token>`. Registro e login têm limite de 10 requisições/minuto.
 
-## License
+Resposta de `register`/`login`:
 
-The Laravel framework is open-sourced software licensed under the [MIT license](https://opensource.org/licenses/MIT).
+```json
+{
+  "user": { "id": 1, "name": "…", "email": "…", "role": "user", "created_at": "…" },
+  "access_token": "eyJ…",
+  "token_type": "Bearer",
+  "expires_in": 3600
+}
+```
+
+## Como o JWT funciona
+
+- **Assinatura RS256**: só o auth-service tem a **chave privada** e emite tokens.
+  Os demais microsserviços (herd, monitoring) precisam apenas da **chave pública** (`storage/jwt/public.pem`) para validar a assinatura localmente.
+- Claims: `iss`, `sub` (id do usuário), `role`, `name`, `email`, `iat`, `nbf`, `exp`, `jti`.
+- O algoritmo é fixado no servidor (o `alg` do header do token não é confiável).
+- Dentro do auth-service, o **perfil é lido do banco**, não do claim — rebaixar/excluir um usuário vale imediatamente.
+- **Logout** coloca o `jti` em uma lista de revogação (cache) até o token expirar.
+  Limitação: os outros serviços validam só assinatura/expiração e não enxergam essa lista; por isso o TTL é curto (`JWT_TTL`, padrão 60 min).
+
+### Variáveis de ambiente
+
+| Variável | Descrição |
+|---|---|
+| `JWT_PRIVATE_KEY_PATH` / `JWT_PUBLIC_KEY_PATH` | Caminho dos PEM (relativo à raiz do projeto ou absoluto) |
+| `JWT_PRIVATE_KEY` / `JWT_PUBLIC_KEY` | Alternativa: conteúdo PEM na variável (`\n` nas quebras). Tem precedência sobre o caminho |
+| `JWT_ISSUER` | Valor do claim `iss` (padrão: `APP_URL`). Deve ser igual em todos os serviços |
+| `JWT_TTL` | Validade em minutos (padrão 60) |
+| `JWT_LEEWAY` | Tolerância de relógio em segundos (padrão 10) |
+| `CORS_ALLOWED_ORIGINS` | Origens do frontend, separadas por vírgula (padrão `http://localhost:5173`) |
+
+`storage/jwt/` está no `.gitignore`: **nunca versione a chave privada**.
+
+Os demais serviços validam o token com a **chave pública** (`storage/jwt/public.pem`) e devem usar o mesmo `JWT_ISSUER` (veja o README do [herd-service](../herd-service/README.md)).

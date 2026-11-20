@@ -1,58 +1,84 @@
-<p align="center"><a href="https://laravel.com" target="_blank"><img src="https://raw.githubusercontent.com/laravel/art/master/logo-lockup/5%20SVG/2%20CMYK/1%20Full%20Color/laravel-logolockup-cmyk-red.svg" width="400" alt="Laravel Logo"></a></p>
+# HerdVision — Herd Service (MS2)
 
-<p align="center">
-<a href="https://github.com/laravel/framework/actions"><img src="https://github.com/laravel/framework/workflows/tests/badge.svg" alt="Build Status"></a>
-<a href="https://packagist.org/packages/laravel/framework"><img src="https://img.shields.io/packagist/dt/laravel/framework" alt="Total Downloads"></a>
-<a href="https://packagist.org/packages/laravel/framework"><img src="https://img.shields.io/packagist/v/laravel/framework" alt="Latest Stable Version"></a>
-<a href="https://packagist.org/packages/laravel/framework"><img src="https://img.shields.io/packagist/l/laravel/framework" alt="License"></a>
-</p>
+Microsserviço de **gestão do rebanho**: lotes, animais, protocolos de manejo e a associação entre animais e protocolos.
 
-## About Laravel
+Este serviço **não emite nem guarda usuários**: ele apenas valida os JWTs emitidos pelo [auth-service](../auth-service/README.md).
 
-Laravel is a web application framework with expressive, elegant syntax. We believe development must be an enjoyable and creative experience to be truly fulfilling. Laravel takes the pain out of development by easing common tasks used in many web projects, such as:
+## Executar localmente
 
-- [Simple, fast routing engine](https://laravel.com/docs/routing).
-- [Powerful dependency injection container](https://laravel.com/docs/container).
-- Multiple back-ends for [session](https://laravel.com/docs/session) and [cache](https://laravel.com/docs/cache) storage.
-- Expressive, intuitive [database ORM](https://laravel.com/docs/eloquent).
-- Database agnostic [schema migrations](https://laravel.com/docs/migrations).
-- [Robust background job processing](https://laravel.com/docs/queues).
-- [Real-time event broadcasting](https://laravel.com/docs/broadcasting).
-
-Laravel is accessible, powerful, and provides tools required for large, robust applications.
-
-## Learning Laravel
-
-Laravel has the most extensive and thorough [documentation](https://laravel.com/docs) and video tutorial library of all modern web application frameworks, making it a breeze to get started with the framework.
-
-In addition, [Laracasts](https://laracasts.com) contains thousands of video tutorials on a range of topics including Laravel, modern PHP, unit testing, and JavaScript. Boost your skills by digging into our comprehensive video library.
-
-You can also watch bite-sized lessons with real-world projects on [Laravel Learn](https://laravel.com/learn), where you will be guided through building a Laravel application from scratch while learning PHP fundamentals.
-
-## Agentic Development
-
-Laravel's predictable structure and conventions make it ideal for AI coding agents like Claude Code, Cursor, and GitHub Copilot. Install [Laravel Boost](https://laravel.com/docs/ai) to supercharge your AI workflow:
+Rode o **auth-service primeiro** (ele gera o par de chaves) e depois:
 
 ```bash
-composer require laravel/boost --dev
-
-php artisan boost:install
+composer install
+cp .env.example .env
+php artisan key:generate
+touch database/database.sqlite
+php artisan migrate
+php artisan serve --port=8001
 ```
 
-Boost provides your agent 15+ tools and skills that help agents build Laravel applications while following best practices.
+### Passo obrigatório: chave pública do JWT
 
-## Contributing
+Para validar tokens, este serviço precisa da **chave pública** do auth-service. Copie o arquivo (a chave **privada** nunca deve sair do auth-service):
 
-Thank you for considering contributing to the Laravel framework! The contribution guide can be found in the [Laravel documentation](https://laravel.com/docs/contributions).
+```bash
+mkdir -p storage/jwt
+cp ../auth-service/storage/jwt/public.pem storage/jwt/public.pem
+```
 
-## Code of Conduct
+Alternativa, útil em deploy: coloque o conteúdo do PEM na variável `JWT_PUBLIC_KEY` do `.env`, em uma linha, com `\n` nas quebras (ela tem precedência sobre o arquivo).
 
-In order to ensure that the Laravel community is welcoming to all, please review and abide by the [Code of Conduct](https://laravel.com/docs/contributions#code-of-conduct).
+Sem a chave, as rotas protegidas respondem **500** com a mensagem *"Chave pública JWT não encontrada…"* (erro de configuração, e não 401).
 
-## Security Vulnerabilities
+`storage/jwt/` está no `.gitignore`.
 
-If you discover a security vulnerability within Laravel, please send an e-mail to Taylor Otwell via [taylor@laravel.com](mailto:taylor@laravel.com). All security vulnerabilities will be promptly addressed.
+## Variáveis de ambiente
 
-## License
+| Variável | Descrição |
+|---|---|
+| `JWT_PUBLIC_KEY_PATH` | Caminho do PEM público (relativo à raiz do projeto ou absoluto). Padrão: `storage/jwt/public.pem` |
+| `JWT_PUBLIC_KEY` | Alternativa: conteúdo PEM na variável (`\n` nas quebras). Tem precedência sobre o caminho |
+| `JWT_ISSUER` | Deve ser **igual** ao `JWT_ISSUER` do auth-service (por padrão, o `APP_URL` **dele**, `http://localhost:8000`). Não use o `APP_URL` deste serviço |
+| `JWT_LEEWAY` | Tolerância de relógio em segundos (padrão 10) |
+| `CORS_ALLOWED_ORIGINS` | Origens do frontend, separadas por vírgula (padrão `http://localhost:5173`) |
 
-The Laravel framework is open-sourced software licensed under the [MIT license](https://opensource.org/licenses/MIT).
+## Autenticação nas rotas
+
+Envie `Authorization: Bearer <access_token>` (obtido em `POST /api/auth/login` no auth-service).
+
+- Middleware `jwt`: valida assinatura (RS256), expiração, emissor e `sub`. Falhas respondem **401**.
+- Middleware `role:admin` (ou `role:admin,user`): restringe por perfil. Perfil não permitido responde **403**.
+
+### Limitações conhecidas
+
+- O **perfil (`role`) vem do token** e vale até ele expirar. No auth-service o perfil é lido do banco; aqui não há banco de usuários.
+- O **logout** revoga o token só no auth-service. Este serviço não enxerga a lista de revogação, então um token já revogado continua aceito aqui até expirar. O TTL do token é curto (`JWT_TTL`, padrão 60 min no auth-service).
+
+## Endpoints
+
+Todos exigem `Authorization: Bearer <token>`. Respostas de erro seguem `{"message": "..."}` (e `errors` nos 422).
+
+### Lotes (`/api/lots`)
+
+| Método | Rota | Quem pode | Descrição |
+|---|---|---|---|
+| GET | `/api/lots` | admin, user | Lista com `search` (nome/descrição), `per_page` (1–100, padrão 15) e paginação. Cada lote traz `animals_count` |
+| GET | `/api/lots/{id}` | admin, user | Consulta um lote |
+| POST | `/api/lots` | admin, user | Cria. Campos: `name` (obrigatório, máx. 255), `description` (opcional) |
+| PUT/PATCH | `/api/lots/{id}` | admin, user | Atualização parcial: só os campos enviados mudam (`"description": null` limpa a descrição) |
+| DELETE | `/api/lots/{id}` | **admin** | Exclui (204). Lote com animais responde **409** com `animals_count` |
+
+Códigos: `401` sem token ou token inválido · `403` perfil sem permissão · `404` lote inexistente · `409` lote com animais · `422` validação.
+
+## Banco de dados
+
+SQLite próprio (`database/database.sqlite`), sem chaves estrangeiras para outros serviços.
+
+| Tabela | Observações |
+|---|---|
+| `lots` | Lotes |
+| `animals` | `lot_id` obrigatório; excluir um lote com animais é bloqueado |
+| `management_protocols` | Protocolos de manejo (`active` padrão `true`) |
+| `animal_management_protocol` | N:N com **id próprio**: o mesmo protocolo pode ser aplicado várias vezes ao mesmo animal |
+
+Testes: `php artisan test` · Estilo: `vendor/bin/pint --test`
