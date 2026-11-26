@@ -37,8 +37,7 @@ function singlePageMeta(count: number): PageMeta {
 }
 
 /**
- * Rotas dos serviços. As marcadas como "prevista" ainda não existem no backend
- * (DESIGN.md §9, 🕓); ajuste aqui quando forem criadas.
+ * Rotas dos serviços (todas existem no backend desde a Release 3).
  */
 export const routes = {
   auth: {
@@ -51,6 +50,6 @@ export const routes = {
   animals: '/api/animals',
   protocols: '/api/protocols',
   animalProtocols: '/api/animal-protocols', // tabela animal_management_protocol
-  readings: '/api/readings', // prevista (monitoring-service)
-  alerts: '/api/alerts', // prevista (monitoring-service)
+  readings: '/api/readings', // monitoring-service
+  alerts: '/api/alerts', // monitoring-service
 };

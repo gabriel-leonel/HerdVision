@@ -5,6 +5,7 @@ namespace Tests\Feature\Database;
 use App\Enums\AlertStatus;
 use App\Models\Alert;
 use App\Models\MonitoringReading;
+use App\Services\AlertWorkflow;
 use Illuminate\Database\QueryException;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Illuminate\Support\Facades\Schema;
@@ -103,5 +104,26 @@ class MonitoringSchemaTest extends TestCase
         $reading->delete();
 
         $this->assertDatabaseHas('alerts', ['id' => $alert->id, 'monitoring_reading_id' => null]);
+    }
+
+    public function test_activity_and_feeding_levels_are_numeric(): void
+    {
+        $reading = MonitoringReading::create(['animal_id' => 1, 'recorded_at' => now(), 'activity_level' => 37.5, 'feeding_level' => 100]);
+
+        $this->assertSame(37.5, $reading->fresh()->activity_level);
+        $this->assertSame(100.0, $reading->fresh()->feeding_level);
+        $this->assertSame(1, MonitoringReading::where('activity_level', '<', 40)->count());
+    }
+
+    public function test_status_history_is_deleted_with_its_alert(): void
+    {
+        $alert = app(AlertWorkflow::class)->open([
+            'animal_id' => 1, 'type' => 'temperatura', 'description' => 'Febre', 'severity' => 'alta',
+        ]);
+        $this->assertDatabaseCount('alert_status_changes', 1);
+
+        $alert->delete();
+
+        $this->assertDatabaseCount('alert_status_changes', 0);
     }
 }

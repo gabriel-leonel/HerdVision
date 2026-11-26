@@ -8,9 +8,10 @@ use Illuminate\Database\Eloquent\Attributes\Fillable;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
+use Illuminate\Database\Eloquent\Relations\HasMany;
 
 // `status` fora do $fillable: o status só muda pelo fluxo de tratamento
-// (transições validadas no backend, previstas para as próximas etapas).
+// (App\Services\AlertWorkflow, que valida a transição e grava o histórico).
 #[Fillable(['animal_id', 'monitoring_reading_id', 'type', 'description', 'severity'])]
 class Alert extends Model
 {
@@ -42,5 +43,15 @@ class Alert extends Model
     public function reading(): BelongsTo
     {
         return $this->belongsTo(MonitoringReading::class, 'monitoring_reading_id');
+    }
+
+    /**
+     * Mudanças de status, da mais antiga para a mais recente.
+     *
+     * @return HasMany<AlertStatusChange, $this>
+     */
+    public function history(): HasMany
+    {
+        return $this->hasMany(AlertStatusChange::class)->orderBy('created_at')->orderBy('id');
     }
 }

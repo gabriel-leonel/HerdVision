@@ -20,7 +20,9 @@ class MonitoringReading extends Model
     protected function casts(): array
     {
         return [
-            'temperature' => 'decimal:2',
+            'temperature' => 'float',
+            'activity_level' => 'float',
+            'feeding_level' => 'float',
             'recorded_at' => 'datetime',
         ];
     }

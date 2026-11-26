@@ -199,6 +199,14 @@ return [
         'role' => 'perfil',
         'search' => 'busca',
         'per_page' => 'itens por página',
+        'animal_id' => 'animal',
+        'recorded_at' => 'data e hora da leitura',
+        'temperature' => 'temperatura',
+        'activity_level' => 'índice de atividade',
+        'feeding_level' => 'índice de alimentação',
+        'status' => 'status',
+        'severity' => 'gravidade',
+        'type' => 'tipo',
     ],
 
 ];

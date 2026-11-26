@@ -114,7 +114,7 @@ export const animalProtocolsApi = {
   remove: (id: number) => request<void>('herd', `${routes.animalProtocols}/${id}`, { method: 'DELETE' }),
 };
 
-// ---------------- Leituras (monitoring-service) 🕓 ----------------
+// ---------------- Leituras (monitoring-service) ----------------
 export interface ReadingInput {
   animal_id: number;
   temperature: number | null;
@@ -130,7 +130,7 @@ export const readingsApi = {
   create: async (input: ReadingInput) => unwrap<Reading>(await request('monitoring', routes.readings, { method: 'POST', body: input })),
 };
 
-// ---------------- Alertas (monitoring-service) 🕓 ----------------
+// ---------------- Alertas (monitoring-service) ----------------
 export interface AlertListParams extends ListParams {
   status?: AlertStatus | '';
   severity?: string;

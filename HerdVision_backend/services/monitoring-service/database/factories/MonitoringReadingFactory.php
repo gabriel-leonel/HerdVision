@@ -18,8 +18,8 @@ class MonitoringReadingFactory extends Factory
         return [
             'animal_id' => fake()->numberBetween(1, 500),
             'temperature' => fake()->randomFloat(2, 37.5, 40.5),
-            'activity_level' => fake()->randomElement(['baixo', 'normal', 'alto']),
-            'feeding_level' => fake()->randomElement(['baixo', 'normal', 'alto']),
+            'activity_level' => fake()->numberBetween(20, 100),
+            'feeding_level' => fake()->numberBetween(20, 100),
             'recorded_at' => fake()->dateTimeBetween('-7 days', 'now'),
         ];
     }
