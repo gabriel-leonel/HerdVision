@@ -25,6 +25,8 @@ Testes: `php artisan test` · Estilo: `vendor/bin/pint --test`
 
 > Senhas públicas, somente para ambiente local/avaliação. Não execute o seeder em produção.
 
+No container (Docker/Render), defina `SEED_DEMO_USERS=true` para o `docker-entrypoint.sh` rodar o seeder a cada inicialização. Ele é idempotente: só cria os usuários que ainda não existem.
+
 ## Endpoints
 
 | Método | Rota | Acesso | Descrição |
