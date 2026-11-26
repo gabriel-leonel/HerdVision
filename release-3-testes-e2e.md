@@ -81,7 +81,7 @@ e DOC podem rodar.
 | Entidade | Conteúdo |
 |---|---|
 | Lotes | Engorda Norte (4 animais), Cria Sul (4), Leiteiras (4) |
-| Animais | BR1001 Trovão, BR1002, BR1003 Pintado (em tratamento), BR1004 · BR2001 Mimosa, BR2002 Estrela, BR2003, BR2004 Bonita (inativo) · BR3001 Malhada, BR3002 Princesa (em tratamento), BR3003 Jóia, BUF001 Negão (Bubalino) |
+| Animais | BR1001 Trovão, BR1002, BR1003 Pintado (em tratamento), BR1004 · BR2001 Mimosa, BR2002 Estrela, BR2003, BR2004 Bonita (inativo) · BR3001 Malhada, BR3002 Princesa (em tratamento), BR3003 Jóia, BUF001 Bravo (Bubalino) |
 | Protocolos | Vacinação contra febre aftosa (3 animais), Vermifugação (2), Suplementação mineral (2), IATF (2), Ração de transição (**inativo**, 1) |
 | Alertas 🛰 | Pendente 4 · Em análise 2 · Resolvido 1 |
 | Alerta reaberto 🛰 | BR3001 Malhada, temperatura 40,1 °C: histórico Pendente → Em análise (Usuário Demo) → Resolvido (Administrador Demo) → Pendente (Usuário Demo) |

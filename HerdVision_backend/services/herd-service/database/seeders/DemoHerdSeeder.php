@@ -37,7 +37,7 @@ class DemoHerdSeeder extends Seeder
         [9, 'BR3001', 'Malhada', 'Bovino', 'Holandês', '2020-09-18', 'ativo', 3],
         [10, 'BR3002', 'Princesa', 'Bovino', 'Holandês', '2021-01-25', 'em tratamento', 3],
         [11, 'BR3003', 'Jóia', 'Bovino', 'Girolando', '2021-07-07', 'ativo', 3],
-        [12, 'BUF001', 'Negão', 'Bubalino', 'Murrah', '2022-05-15', 'ativo', 3],
+        [12, 'BUF001', 'Bravo', 'Bubalino', 'Murrah', '2022-05-15', 'ativo', 3],
     ];
 
     /** [id, nome, tipo, ativo, descrição] */
