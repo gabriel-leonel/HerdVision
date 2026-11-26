@@ -76,7 +76,7 @@ Gerada automaticamente pelo [Scramble](https://scramble.dedoc.co) a partir das r
 | Ambiente | Interface | Especificação JSON |
 |---|---|---|
 | Local | http://localhost:8002/docs/api | http://localhost:8002/docs/api.json |
-| Produção | https://MONITORING-SERVICE.onrender.com/docs/api | https://MONITORING-SERVICE.onrender.com/docs/api.json |
+| Produção | https://monitoring-service-gm4u.onrender.com/docs/api | https://monitoring-service-gm4u.onrender.com/docs/api.json |
 
 Para testar pela interface, use **Authorize** com o `access_token` de `POST /api/auth/login` (auth-service). As respostas 401/403 dos middlewares `jwt`/`role` também são documentadas.
 

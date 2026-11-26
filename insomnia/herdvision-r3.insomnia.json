@@ -46,7 +46,7 @@
       "data": {
         "auth_url": "https://auth-service-od2h.onrender.com",
         "herd_url": "https://herd-service-dy54.onrender.com",
-        "monitoring_url": "https://MONITORING-SERVICE.onrender.com"
+        "monitoring_url": "https://monitoring-service-gm4u.onrender.com"
       }
     },
     {
