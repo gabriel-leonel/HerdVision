@@ -260,6 +260,7 @@ Preencher a cada rodada (✅ passou, ❌ falhou, ⏭ não executado):
 | 2026-11-26 (03:25–03:47 BRT) | produção | `19d405d` | Claude (Playwright MCP) | 85 ✅ · 1 ⚠ · 1 ❌ de 87 casos | ANI-06 ❌ · ALR-03 ⚠ |
 | 2026-11-26 (12:30 BRT, reteste) | produção | `fcecc00` | Claude (Playwright MCP) | ANI-06 ✅ · ALR-03 ✅ (87 de 87) | --- |
 | 2026-11-26 (13:05–13:30 BRT, regressão completa) | produção | `6b68fd5` | Claude (Playwright MCP, scripts) | 87 ✅ de 87 | --- |
+| 2026-11-26 (14:55–15:20 BRT, regressão final da R4) | produção | `7789d75` | Claude (Playwright MCP, scripts) | 87 ✅ de 87 | --- |
 
 ### 5.1. Rodada de 2026-11-26: detalhes
 

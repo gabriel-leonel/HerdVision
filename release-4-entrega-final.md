@@ -195,16 +195,28 @@ A partir daí, só o job `deploy-frontend` publica em produção.
 
 A Release 4 (entrega final) estará concluída quando houver:
 
-- [ ] Workflow "CI" rodando em push e PR, com os três serviços e o
+- [x] Workflow "CI" rodando em push e PR, com os três serviços e o
     frontend.
-- [ ] Render com "After CI Checks Pass" nos três serviços.
-- [ ] Vercel publicando só pelo workflow, depois dos testes.
-- [ ] CI/CD validado com um check vermelho (sem deploy) e um verde (com
+- [x] Render com "After CI Checks Pass" nos três serviços.
+- [x] Vercel publicando só pelo workflow, depois dos testes.
+- [x] CI/CD validado com um check vermelho (sem deploy) e um verde (com
     deploy).
-- [ ] Seed com "Bravo" no lugar de "Negão", e roteiro E2E atualizado.
-- [ ] README raiz completo, com checklist de avaliação e uso de IA.
-- [ ] Regressão final: 87/87 no E2E em produção e suítes verdes.
+- [x] Seed com "Bravo" no lugar de "Negão", e roteiro E2E atualizado.
+- [x] README raiz completo, com checklist de avaliação e uso de IA.
+- [x] Regressão final: 87/87 no E2E em produção e suítes verdes.
 - [ ] Tag Git `v1.0` criada e enviada ao repositório remoto.
+
+**Achados durante a execução:**
+
+- O CI expôs um defeito antigo: a suíte do herd terminava com código 1
+    mesmo com os 161 testes passando, por um aviso do PHPUnit no
+    `PermissionMatrixTest` (o data provider passava 3 argumentos para um
+    método que aceitava 2). Corrigido no PR #4.
+- O primeiro deploy pelo workflow quebrou o login em produção:
+    `VITE_AUTH_API_URL` e `VITE_API_MODE` são do tipo *Sensitive* na
+    Vercel, e o `vercel pull` não devolve o valor delas. O job
+    `deploy-frontend` passou a definir esses valores públicos e a conferir
+    as três URLs no bundle antes de publicar.
 
 Comandos sugeridos, após validar e commitar:
 

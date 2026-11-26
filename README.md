@@ -176,7 +176,7 @@ A coleção do Insomnia em [insomnia/herdvision-r3.insomnia.json](insomnia/herdv
 
 Os testes do backend usam SQLite em memória e geram um par RSA efêmero, então não precisam de banco nem de chaves. O estilo do PHP é verificado com `vendor/bin/pint --test`, e o TypeScript com `npm run typecheck`.
 
-**Testes E2E:** o roteiro [release-3-testes-e2e.md](release-3-testes-e2e.md) tem **87 casos** (telas, permissões, RN01 e chamadas diretas à API), executados com o Playwright contra a produção. Última rodada: **87/87**.
+**Testes E2E:** o roteiro [release-3-testes-e2e.md](release-3-testes-e2e.md) tem **87 casos** (telas, permissões, RN01 e chamadas diretas à API), executados com o Playwright contra a produção. Última rodada (regressão final da `v1.0`): **87/87**.
 
 ## CI/CD
 
@@ -196,9 +196,10 @@ push / PR na main
 
 Um teste quebrado deixa o commit vermelho: nada é publicado em nenhum dos quatro destinos.
 
-**Evidências:**
-- Execução vermelha (teste quebrado, sem deploy): _link a preencher_
-- Execução verde (com deploy): _link a preencher_
+**Evidências** (validação do [PR #4](https://github.com/gabriel-leonel/HerdVision/pull/4)):
+- Execução vermelha, com um teste quebrado de propósito: [run 45868142110](https://github.com/gabriel-leonel/HerdVision/actions/runs/45868142110). O job do herd-service falhou em "Testes" e o deploy foi pulado.
+- Execução verde no PR, depois da correção: [run 45868743588](https://github.com/gabriel-leonel/HerdVision/actions/runs/45868743588).
+- Execução verde na `main`, com deploy: [run 45870968241](https://github.com/gabriel-leonel/HerdVision/actions/runs/45870968241). Os quatro jobs passaram, a Vercel publicou o frontend e o Render redeployou depois dos checks.
 
 ## Checklist de avaliação
 
