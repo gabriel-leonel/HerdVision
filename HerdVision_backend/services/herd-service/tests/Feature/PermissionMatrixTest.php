@@ -69,8 +69,11 @@ class PermissionMatrixTest extends TestCase
         ]);
     }
 
+    /**
+     * @param  list<string>  $allowed  não usado aqui; o PHPUnit exige que o método aceite todos os argumentos do data provider
+     */
     #[DataProvider('routes')]
-    public function test_request_without_token_gets_401(string $method, string $uri): void
+    public function test_request_without_token_gets_401(string $method, string $uri, array $allowed): void
     {
         $this->json($method, $this->resolve($uri))->assertUnauthorized();
     }
