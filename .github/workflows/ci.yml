@@ -106,8 +106,28 @@ jobs:
       - name: Baixar configuração e variáveis de produção
         run: vercel pull --yes --environment=production --token=${{ secrets.VERCEL_TOKEN }}
 
+      # VITE_AUTH_API_URL e VITE_API_MODE são do tipo "Sensitive" na Vercel, e o
+      # `vercel pull` não devolve o valor delas (vem um placeholder). São valores
+      # públicos (vão para o bundle), então ficam definidos aqui.
+      - name: Variáveis públicas do frontend
+        run: |
+          f=.vercel/.env.production.local
+          sed -i '/^VITE_AUTH_API_URL=/d;/^VITE_API_MODE=/d' "$f"
+          echo 'VITE_AUTH_API_URL="https://auth-service-od2h.onrender.com"' >> "$f"
+          echo 'VITE_API_MODE="live"' >> "$f"
+          grep -o '^VITE_[A-Z_]*=' "$f"
+
       - name: Build
         run: vercel build --prod --token=${{ secrets.VERCEL_TOKEN }}
+
+      - name: Conferir as URLs no bundle
+        run: |
+          js=$(find . -path '*/.vercel/output/static/assets/*.js' -not -path '*/node_modules/*')
+          [ -n "$js" ] || { echo "::error::bundle não encontrado em .vercel/output"; exit 1; }
+          for url in https://auth-service-od2h.onrender.com https://herd-service-dy54.onrender.com https://monitoring-service-gm4u.onrender.com; do
+            grep -q "$url" $js || { echo "::error::$url não está no bundle"; exit 1; }
+          done
+          if grep -q 'SENSITIVE' $js; then echo "::error::placeholder [SENSITIVE] no bundle"; exit 1; fi
 
       - name: Deploy
         run: vercel deploy --prebuilt --prod --token=${{ secrets.VERCEL_TOKEN }}
