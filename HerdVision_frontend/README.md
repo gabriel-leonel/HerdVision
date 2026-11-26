@@ -38,20 +38,18 @@ Usa um backend simulado no navegador (dados em `localStorage`) que reproduz os c
 
 ## Rotas da API
 
-Rotas existentes (✅) e previstas (🕓) ficam centralizadas em [src/api/client.ts](src/api/client.ts). Quando o backend publicar as previstas com outro caminho, ajuste só esse arquivo.
+As rotas ficam centralizadas em [src/api/client.ts](src/api/client.ts).
 
-| Recurso | Rota | Situação |
-|---|---|---|
-| Auth | `POST /api/auth/login`, `/register`, `/logout` | ✅ |
-| Usuários (admin) | `GET /api/users?search&role&per_page` | ✅ |
-| Lotes | `GET/POST /api/lots`, `GET/PATCH/DELETE /api/lots/{id}` | ✅ |
-| Animais | `/api/animals` (CRUD, filtros `search`, `lot_id`, `status`) | 🕓 |
-| Protocolos | `/api/protocols` (CRUD, filtro `type`) | 🕓 |
-| Animal ↔ protocolo | `/api/animal-protocols` (filtros `animal_id`, `management_protocol_id`) | 🕓 |
-| Leituras | `GET/POST /api/readings`, `GET /api/readings/{id}` | 🕓 |
-| Alertas | `GET /api/alerts`, `PATCH /api/alerts/{id}/status`, `POST /api/alerts/{id}/reopen` | 🕓 |
-
-No modo `live`, telas cujo endpoint ainda não existe mostram "Recurso ainda não disponível" em vez de quebrar.
+| Recurso | Rota |
+|---|---|
+| Auth | `POST /api/auth/login`, `/register`, `/logout` |
+| Usuários (admin) | `GET /api/users?search&role&per_page` |
+| Lotes | `GET/POST /api/lots`, `GET/PATCH/DELETE /api/lots/{id}` |
+| Animais | `/api/animals` (CRUD, filtros `search`, `lot_id`, `status`) |
+| Protocolos | `/api/protocols` (CRUD, filtro `type`) |
+| Animal ↔ protocolo | `/api/animal-protocols` (filtros `animal_id`, `management_protocol_id`) |
+| Leituras | `GET/POST /api/readings`, `GET /api/readings/{id}` |
+| Alertas | `GET /api/alerts`, `PATCH /api/alerts/{id}/status`, `POST /api/alerts/{id}/reopen` |
 
 ## Estrutura
 
@@ -73,4 +71,4 @@ src/
 - **Valores a confirmar** (DESIGN.md §13.2), centralizados em [src/lib/semantics.ts](src/lib/semantics.ts): `animals.status` (`ativo`, `em tratamento`, `inativo`), tipos de protocolo, status da associação, faixa de temperatura (37,5–39,5 °C) e limite de atividade/alimentação (40).
 - **Histórico do alerta:** exibido se a API devolver `history`; caso contrário, mostra criação e última alteração.
 - **Login social:** fora do escopo do produto (decisão da Release 3); entrada só por e-mail e senha.
-- **Deploy (Vercel):** `vercel.json` redireciona todas as rotas para o `index.html` (SPA).
+- **Deploy (Vercel):** `vercel.json` redireciona todas as rotas para o `index.html` (SPA) e desliga o deploy pela integração com o Git; a produção é publicada pelo workflow de CI, depois dos testes.
