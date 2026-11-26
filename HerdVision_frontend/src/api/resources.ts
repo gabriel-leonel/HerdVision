@@ -47,7 +47,7 @@ export const lotsApi = {
   all: async () => (await lotsApi.list({ per_page: 100 })).data,
 };
 
-// ---------------- Animais (herd-service) 🕓 ----------------
+// ---------------- Animais (herd-service) ----------------
 export interface AnimalInput {
   identification?: string;
   name?: string | null;
@@ -73,7 +73,7 @@ export const animalsApi = {
   remove: (id: number | string) => request<void>('herd', `${routes.animals}/${id}`, { method: 'DELETE' }),
 };
 
-// ---------------- Protocolos de manejo (herd-service) 🕓 ----------------
+// ---------------- Protocolos de manejo (herd-service) ----------------
 export interface ProtocolInput {
   name?: string;
   description?: string | null;
@@ -96,7 +96,7 @@ export const protocolsApi = {
   remove: (id: number | string) => request<void>('herd', `${routes.protocols}/${id}`, { method: 'DELETE' }),
 };
 
-// ---------------- Associação animal ↔ protocolo (herd-service) 🕓 ----------------
+// ---------------- Associação animal ↔ protocolo (herd-service) ----------------
 export interface AnimalProtocolInput {
   animal_id: number;
   management_protocol_id: number;

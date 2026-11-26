@@ -176,8 +176,15 @@ return [
     */
 
     'custom' => [
-        'attribute-name' => [
-            'rule-name' => 'custom-message',
+        'identification' => [
+            'unique' => 'Já existe um animal com esta identificação.',
+        ],
+        'birth_date' => [
+            'before_or_equal' => 'A data de nascimento não pode estar no futuro.',
+            'date_format' => 'O campo data de nascimento deve ser uma data válida no formato AAAA-MM-DD.',
+        ],
+        'start_date' => [
+            'date_format' => 'O campo data de início deve ser uma data válida no formato AAAA-MM-DD.',
         ],
     ],
 
@@ -199,6 +206,17 @@ return [
         'role' => 'perfil',
         'search' => 'busca',
         'per_page' => 'itens por página',
+        'identification' => 'identificação',
+        'species' => 'espécie',
+        'breed' => 'raça',
+        'birth_date' => 'data de nascimento',
+        'status' => 'status',
+        'lot_id' => 'lote',
+        'type' => 'tipo',
+        'active' => 'situação',
+        'animal_id' => 'animal',
+        'management_protocol_id' => 'protocolo',
+        'start_date' => 'data de início',
     ],
 
 ];

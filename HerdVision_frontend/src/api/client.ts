@@ -48,9 +48,9 @@ export const routes = {
   },
   users: '/api/users',
   lots: '/api/lots',
-  animals: '/api/animals', // prevista
-  protocols: '/api/protocols', // prevista
-  animalProtocols: '/api/animal-protocols', // prevista (tabela animal_management_protocol)
+  animals: '/api/animals',
+  protocols: '/api/protocols',
+  animalProtocols: '/api/animal-protocols', // tabela animal_management_protocol
   readings: '/api/readings', // prevista (monitoring-service)
   alerts: '/api/alerts', // prevista (monitoring-service)
 };
