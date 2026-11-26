@@ -1,0 +1,946 @@
+{
+  "_type": "export",
+  "__export_format": 4,
+  "__export_date": "2026-11-26T00:00:00.000Z",
+  "__export_source": "herdvision.release-3",
+  "resources": [
+    {
+      "_id": "wrk_herdvision",
+      "_type": "workspace",
+      "parentId": null,
+      "name": "HerdVision API (Release 3)",
+      "description": "Auth, Herd e Monitoring. Rode 'Login admin' (ou 'Login user') primeiro: o token é encadeado nas demais requisições.",
+      "scope": "collection"
+    },
+    {
+      "_id": "env_base",
+      "_type": "environment",
+      "parentId": "wrk_herdvision",
+      "name": "Base Environment",
+      "data": {
+        "token": "{% response 'body', 'req_auth_login_admin', 'b64::JC5hY2Nlc3NfdG9rZW4=::46b', 'when-expired', 3000 %}",
+        "animal_id": "1",
+        "lot_id": "1",
+        "protocol_id": "1",
+        "application_id": "1",
+        "alert_id": "1",
+        "reading_id": "1"
+      }
+    },
+    {
+      "_id": "env_local",
+      "_type": "environment",
+      "parentId": "env_base",
+      "name": "Local",
+      "data": {
+        "auth_url": "http://localhost:8000",
+        "herd_url": "http://localhost:8001",
+        "monitoring_url": "http://localhost:8002"
+      }
+    },
+    {
+      "_id": "env_prod",
+      "_type": "environment",
+      "parentId": "env_base",
+      "name": "Produção (Render)",
+      "data": {
+        "auth_url": "https://auth-service-od2h.onrender.com",
+        "herd_url": "https://herd-service-dy54.onrender.com",
+        "monitoring_url": "https://MONITORING-SERVICE.onrender.com"
+      }
+    },
+    {
+      "_id": "fld_auth",
+      "_type": "request_group",
+      "parentId": "wrk_herdvision",
+      "name": "Auth Service",
+      "metaSortKey": 0
+    },
+    {
+      "_id": "fld_lots",
+      "_type": "request_group",
+      "parentId": "wrk_herdvision",
+      "name": "Herd · Lotes",
+      "metaSortKey": 1
+    },
+    {
+      "_id": "fld_animals",
+      "_type": "request_group",
+      "parentId": "wrk_herdvision",
+      "name": "Herd · Animais",
+      "metaSortKey": 2
+    },
+    {
+      "_id": "fld_protocols",
+      "_type": "request_group",
+      "parentId": "wrk_herdvision",
+      "name": "Herd · Protocolos",
+      "metaSortKey": 3
+    },
+    {
+      "_id": "fld_apps",
+      "_type": "request_group",
+      "parentId": "wrk_herdvision",
+      "name": "Herd · Animal ↔ Protocolo",
+      "metaSortKey": 4
+    },
+    {
+      "_id": "fld_readings",
+      "_type": "request_group",
+      "parentId": "wrk_herdvision",
+      "name": "Monitoring · Leituras",
+      "metaSortKey": 5
+    },
+    {
+      "_id": "fld_alerts",
+      "_type": "request_group",
+      "parentId": "wrk_herdvision",
+      "name": "Monitoring · Alertas (RN01)",
+      "metaSortKey": 6
+    },
+    {
+      "_id": "req_auth_login_admin",
+      "_type": "request",
+      "parentId": "fld_auth",
+      "name": "Login admin",
+      "method": "POST",
+      "url": "{{ _.auth_url }}/api/auth/login",
+      "description": "Usuário de demonstração (SEED_DEMO_USERS).",
+      "metaSortKey": 1,
+      "headers": [
+        {
+          "name": "Accept",
+          "value": "application/json"
+        },
+        {
+          "name": "Content-Type",
+          "value": "application/json"
+        }
+      ],
+      "parameters": [],
+      "body": {
+        "mimeType": "application/json",
+        "text": "{\n  \"email\": \"admin@herdvision.com\",\n  \"password\": \"Admin@1234\"\n}"
+      },
+      "authentication": {}
+    },
+    {
+      "_id": "req_auth_login_user",
+      "_type": "request",
+      "parentId": "fld_auth",
+      "name": "Login user",
+      "method": "POST",
+      "url": "{{ _.auth_url }}/api/auth/login",
+      "description": "Para testar o perfil user, troque a variável token para apontar para esta requisição.",
+      "metaSortKey": 2,
+      "headers": [
+        {
+          "name": "Accept",
+          "value": "application/json"
+        },
+        {
+          "name": "Content-Type",
+          "value": "application/json"
+        }
+      ],
+      "parameters": [],
+      "body": {
+        "mimeType": "application/json",
+        "text": "{\n  \"email\": \"user@herdvision.com\",\n  \"password\": \"User@1234\"\n}"
+      },
+      "authentication": {}
+    },
+    {
+      "_id": "req_auth_register",
+      "_type": "request",
+      "parentId": "fld_auth",
+      "name": "Cadastrar",
+      "method": "POST",
+      "url": "{{ _.auth_url }}/api/auth/register",
+      "description": "",
+      "metaSortKey": 3,
+      "headers": [
+        {
+          "name": "Accept",
+          "value": "application/json"
+        },
+        {
+          "name": "Content-Type",
+          "value": "application/json"
+        }
+      ],
+      "parameters": [],
+      "body": {
+        "mimeType": "application/json",
+        "text": "{\n  \"name\": \"Nova Pessoa\",\n  \"email\": \"nova@herdvision.com\",\n  \"password\": \"Senha@1234\",\n  \"password_confirmation\": \"Senha@1234\"\n}"
+      },
+      "authentication": {}
+    },
+    {
+      "_id": "req_auth_me",
+      "_type": "request",
+      "parentId": "fld_auth",
+      "name": "Eu (me)",
+      "method": "GET",
+      "url": "{{ _.auth_url }}/api/auth/me",
+      "description": "",
+      "metaSortKey": 4,
+      "headers": [
+        {
+          "name": "Accept",
+          "value": "application/json"
+        }
+      ],
+      "parameters": [],
+      "body": {},
+      "authentication": {
+        "type": "bearer",
+        "token": "{{ _.token }}"
+      }
+    },
+    {
+      "_id": "req_auth_logout",
+      "_type": "request",
+      "parentId": "fld_auth",
+      "name": "Logout",
+      "method": "POST",
+      "url": "{{ _.auth_url }}/api/auth/logout",
+      "description": "",
+      "metaSortKey": 5,
+      "headers": [
+        {
+          "name": "Accept",
+          "value": "application/json"
+        }
+      ],
+      "parameters": [],
+      "body": {},
+      "authentication": {
+        "type": "bearer",
+        "token": "{{ _.token }}"
+      }
+    },
+    {
+      "_id": "req_users",
+      "_type": "request",
+      "parentId": "fld_auth",
+      "name": "Listar usuários (admin)",
+      "method": "GET",
+      "url": "{{ _.auth_url }}/api/users?search=&role=&per_page=15",
+      "description": "",
+      "metaSortKey": 6,
+      "headers": [
+        {
+          "name": "Accept",
+          "value": "application/json"
+        }
+      ],
+      "parameters": [],
+      "body": {},
+      "authentication": {
+        "type": "bearer",
+        "token": "{{ _.token }}"
+      }
+    },
+    {
+      "_id": "req_lots_index",
+      "_type": "request",
+      "parentId": "fld_lots",
+      "name": "Listar lotes",
+      "method": "GET",
+      "url": "{{ _.herd_url }}/api/lots?search=&per_page=15",
+      "description": "",
+      "metaSortKey": 7,
+      "headers": [
+        {
+          "name": "Accept",
+          "value": "application/json"
+        }
+      ],
+      "parameters": [],
+      "body": {},
+      "authentication": {
+        "type": "bearer",
+        "token": "{{ _.token }}"
+      }
+    },
+    {
+      "_id": "req_lots_show",
+      "_type": "request",
+      "parentId": "fld_lots",
+      "name": "Ver lote",
+      "method": "GET",
+      "url": "{{ _.herd_url }}/api/lots/{{ _.lot_id }}",
+      "description": "",
+      "metaSortKey": 8,
+      "headers": [
+        {
+          "name": "Accept",
+          "value": "application/json"
+        }
+      ],
+      "parameters": [],
+      "body": {},
+      "authentication": {
+        "type": "bearer",
+        "token": "{{ _.token }}"
+      }
+    },
+    {
+      "_id": "req_lots_store",
+      "_type": "request",
+      "parentId": "fld_lots",
+      "name": "Criar lote",
+      "method": "POST",
+      "url": "{{ _.herd_url }}/api/lots",
+      "description": "",
+      "metaSortKey": 9,
+      "headers": [
+        {
+          "name": "Accept",
+          "value": "application/json"
+        },
+        {
+          "name": "Content-Type",
+          "value": "application/json"
+        }
+      ],
+      "parameters": [],
+      "body": {
+        "mimeType": "application/json",
+        "text": "{\n  \"name\": \"Lote Insomnia\",\n  \"description\": \"Criado pela coleção\"\n}"
+      },
+      "authentication": {
+        "type": "bearer",
+        "token": "{{ _.token }}"
+      }
+    },
+    {
+      "_id": "req_lots_update",
+      "_type": "request",
+      "parentId": "fld_lots",
+      "name": "Editar lote",
+      "method": "PATCH",
+      "url": "{{ _.herd_url }}/api/lots/{{ _.lot_id }}",
+      "description": "",
+      "metaSortKey": 10,
+      "headers": [
+        {
+          "name": "Accept",
+          "value": "application/json"
+        },
+        {
+          "name": "Content-Type",
+          "value": "application/json"
+        }
+      ],
+      "parameters": [],
+      "body": {
+        "mimeType": "application/json",
+        "text": "{\n  \"description\": \"Atualizado\"\n}"
+      },
+      "authentication": {
+        "type": "bearer",
+        "token": "{{ _.token }}"
+      }
+    },
+    {
+      "_id": "req_lots_destroy",
+      "_type": "request",
+      "parentId": "fld_lots",
+      "name": "Excluir lote (admin; 409 se tiver animais)",
+      "method": "DELETE",
+      "url": "{{ _.herd_url }}/api/lots/{{ _.lot_id }}",
+      "description": "",
+      "metaSortKey": 11,
+      "headers": [
+        {
+          "name": "Accept",
+          "value": "application/json"
+        }
+      ],
+      "parameters": [],
+      "body": {},
+      "authentication": {
+        "type": "bearer",
+        "token": "{{ _.token }}"
+      }
+    },
+    {
+      "_id": "req_animals_index",
+      "_type": "request",
+      "parentId": "fld_animals",
+      "name": "Listar animais",
+      "method": "GET",
+      "url": "{{ _.herd_url }}/api/animals?search=&lot_id=&status=&per_page=15",
+      "description": "",
+      "metaSortKey": 12,
+      "headers": [
+        {
+          "name": "Accept",
+          "value": "application/json"
+        }
+      ],
+      "parameters": [],
+      "body": {},
+      "authentication": {
+        "type": "bearer",
+        "token": "{{ _.token }}"
+      }
+    },
+    {
+      "_id": "req_animals_show",
+      "_type": "request",
+      "parentId": "fld_animals",
+      "name": "Ver animal",
+      "method": "GET",
+      "url": "{{ _.herd_url }}/api/animals/{{ _.animal_id }}",
+      "description": "",
+      "metaSortKey": 13,
+      "headers": [
+        {
+          "name": "Accept",
+          "value": "application/json"
+        }
+      ],
+      "parameters": [],
+      "body": {},
+      "authentication": {
+        "type": "bearer",
+        "token": "{{ _.token }}"
+      }
+    },
+    {
+      "_id": "req_animals_store",
+      "_type": "request",
+      "parentId": "fld_animals",
+      "name": "Criar animal",
+      "method": "POST",
+      "url": "{{ _.herd_url }}/api/animals",
+      "description": "",
+      "metaSortKey": 14,
+      "headers": [
+        {
+          "name": "Accept",
+          "value": "application/json"
+        },
+        {
+          "name": "Content-Type",
+          "value": "application/json"
+        }
+      ],
+      "parameters": [],
+      "body": {
+        "mimeType": "application/json",
+        "text": "{\n  \"identification\": \"BR9001\",\n  \"name\": \"Insomnia\",\n  \"species\": \"Bovino\",\n  \"breed\": \"Nelore\",\n  \"birth_date\": \"2024-03-10\",\n  \"status\": \"ativo\",\n  \"lot_id\": 1\n}"
+      },
+      "authentication": {
+        "type": "bearer",
+        "token": "{{ _.token }}"
+      }
+    },
+    {
+      "_id": "req_animals_update",
+      "_type": "request",
+      "parentId": "fld_animals",
+      "name": "Editar animal",
+      "method": "PATCH",
+      "url": "{{ _.herd_url }}/api/animals/{{ _.animal_id }}",
+      "description": "",
+      "metaSortKey": 15,
+      "headers": [
+        {
+          "name": "Accept",
+          "value": "application/json"
+        },
+        {
+          "name": "Content-Type",
+          "value": "application/json"
+        }
+      ],
+      "parameters": [],
+      "body": {
+        "mimeType": "application/json",
+        "text": "{\n  \"status\": \"em tratamento\"\n}"
+      },
+      "authentication": {
+        "type": "bearer",
+        "token": "{{ _.token }}"
+      }
+    },
+    {
+      "_id": "req_animals_destroy",
+      "_type": "request",
+      "parentId": "fld_animals",
+      "name": "Excluir animal (admin)",
+      "method": "DELETE",
+      "url": "{{ _.herd_url }}/api/animals/{{ _.animal_id }}",
+      "description": "",
+      "metaSortKey": 16,
+      "headers": [
+        {
+          "name": "Accept",
+          "value": "application/json"
+        }
+      ],
+      "parameters": [],
+      "body": {},
+      "authentication": {
+        "type": "bearer",
+        "token": "{{ _.token }}"
+      }
+    },
+    {
+      "_id": "req_protocols_index",
+      "_type": "request",
+      "parentId": "fld_protocols",
+      "name": "Listar protocolos",
+      "method": "GET",
+      "url": "{{ _.herd_url }}/api/protocols?search=&type=&active=&per_page=15",
+      "description": "",
+      "metaSortKey": 17,
+      "headers": [
+        {
+          "name": "Accept",
+          "value": "application/json"
+        }
+      ],
+      "parameters": [],
+      "body": {},
+      "authentication": {
+        "type": "bearer",
+        "token": "{{ _.token }}"
+      }
+    },
+    {
+      "_id": "req_protocols_show",
+      "_type": "request",
+      "parentId": "fld_protocols",
+      "name": "Ver protocolo",
+      "method": "GET",
+      "url": "{{ _.herd_url }}/api/protocols/{{ _.protocol_id }}",
+      "description": "",
+      "metaSortKey": 18,
+      "headers": [
+        {
+          "name": "Accept",
+          "value": "application/json"
+        }
+      ],
+      "parameters": [],
+      "body": {},
+      "authentication": {
+        "type": "bearer",
+        "token": "{{ _.token }}"
+      }
+    },
+    {
+      "_id": "req_protocols_store",
+      "_type": "request",
+      "parentId": "fld_protocols",
+      "name": "Criar protocolo",
+      "method": "POST",
+      "url": "{{ _.herd_url }}/api/protocols",
+      "description": "",
+      "metaSortKey": 19,
+      "headers": [
+        {
+          "name": "Accept",
+          "value": "application/json"
+        },
+        {
+          "name": "Content-Type",
+          "value": "application/json"
+        }
+      ],
+      "parameters": [],
+      "body": {
+        "mimeType": "application/json",
+        "text": "{\n  \"name\": \"Vacinação clostridiose\",\n  \"type\": \"sanitário\",\n  \"description\": \"Dose anual\",\n  \"active\": true\n}"
+      },
+      "authentication": {
+        "type": "bearer",
+        "token": "{{ _.token }}"
+      }
+    },
+    {
+      "_id": "req_protocols_update",
+      "_type": "request",
+      "parentId": "fld_protocols",
+      "name": "Desativar protocolo",
+      "method": "PATCH",
+      "url": "{{ _.herd_url }}/api/protocols/{{ _.protocol_id }}",
+      "description": "",
+      "metaSortKey": 20,
+      "headers": [
+        {
+          "name": "Accept",
+          "value": "application/json"
+        },
+        {
+          "name": "Content-Type",
+          "value": "application/json"
+        }
+      ],
+      "parameters": [],
+      "body": {
+        "mimeType": "application/json",
+        "text": "{\n  \"active\": false\n}"
+      },
+      "authentication": {
+        "type": "bearer",
+        "token": "{{ _.token }}"
+      }
+    },
+    {
+      "_id": "req_protocols_destroy",
+      "_type": "request",
+      "parentId": "fld_protocols",
+      "name": "Excluir protocolo (admin; 409 se aplicado)",
+      "method": "DELETE",
+      "url": "{{ _.herd_url }}/api/protocols/{{ _.protocol_id }}",
+      "description": "",
+      "metaSortKey": 21,
+      "headers": [
+        {
+          "name": "Accept",
+          "value": "application/json"
+        }
+      ],
+      "parameters": [],
+      "body": {},
+      "authentication": {
+        "type": "bearer",
+        "token": "{{ _.token }}"
+      }
+    },
+    {
+      "_id": "req_apps_index",
+      "_type": "request",
+      "parentId": "fld_apps",
+      "name": "Listar aplicações",
+      "method": "GET",
+      "url": "{{ _.herd_url }}/api/animal-protocols?animal_id={{ _.animal_id }}&management_protocol_id=",
+      "description": "",
+      "metaSortKey": 22,
+      "headers": [
+        {
+          "name": "Accept",
+          "value": "application/json"
+        }
+      ],
+      "parameters": [],
+      "body": {},
+      "authentication": {
+        "type": "bearer",
+        "token": "{{ _.token }}"
+      }
+    },
+    {
+      "_id": "req_apps_store",
+      "_type": "request",
+      "parentId": "fld_apps",
+      "name": "Aplicar protocolo (422 se inativo)",
+      "method": "POST",
+      "url": "{{ _.herd_url }}/api/animal-protocols",
+      "description": "",
+      "metaSortKey": 23,
+      "headers": [
+        {
+          "name": "Accept",
+          "value": "application/json"
+        },
+        {
+          "name": "Content-Type",
+          "value": "application/json"
+        }
+      ],
+      "parameters": [],
+      "body": {
+        "mimeType": "application/json",
+        "text": "{\n  \"animal_id\": 1,\n  \"management_protocol_id\": 2,\n  \"start_date\": \"2026-11-26\",\n  \"status\": \"em andamento\"\n}"
+      },
+      "authentication": {
+        "type": "bearer",
+        "token": "{{ _.token }}"
+      }
+    },
+    {
+      "_id": "req_apps_update",
+      "_type": "request",
+      "parentId": "fld_apps",
+      "name": "Concluir aplicação",
+      "method": "PATCH",
+      "url": "{{ _.herd_url }}/api/animal-protocols/{{ _.application_id }}",
+      "description": "",
+      "metaSortKey": 24,
+      "headers": [
+        {
+          "name": "Accept",
+          "value": "application/json"
+        },
+        {
+          "name": "Content-Type",
+          "value": "application/json"
+        }
+      ],
+      "parameters": [],
+      "body": {
+        "mimeType": "application/json",
+        "text": "{\n  \"status\": \"concluído\"\n}"
+      },
+      "authentication": {
+        "type": "bearer",
+        "token": "{{ _.token }}"
+      }
+    },
+    {
+      "_id": "req_apps_destroy",
+      "_type": "request",
+      "parentId": "fld_apps",
+      "name": "Desvincular",
+      "method": "DELETE",
+      "url": "{{ _.herd_url }}/api/animal-protocols/{{ _.application_id }}",
+      "description": "",
+      "metaSortKey": 25,
+      "headers": [
+        {
+          "name": "Accept",
+          "value": "application/json"
+        }
+      ],
+      "parameters": [],
+      "body": {},
+      "authentication": {
+        "type": "bearer",
+        "token": "{{ _.token }}"
+      }
+    },
+    {
+      "_id": "req_readings_index",
+      "_type": "request",
+      "parentId": "fld_readings",
+      "name": "Listar leituras",
+      "method": "GET",
+      "url": "{{ _.monitoring_url }}/api/readings?animal_id={{ _.animal_id }}&per_page=15",
+      "description": "",
+      "metaSortKey": 26,
+      "headers": [
+        {
+          "name": "Accept",
+          "value": "application/json"
+        }
+      ],
+      "parameters": [],
+      "body": {},
+      "authentication": {
+        "type": "bearer",
+        "token": "{{ _.token }}"
+      }
+    },
+    {
+      "_id": "req_readings_show",
+      "_type": "request",
+      "parentId": "fld_readings",
+      "name": "Ver leitura",
+      "method": "GET",
+      "url": "{{ _.monitoring_url }}/api/readings/{{ _.reading_id }}",
+      "description": "",
+      "metaSortKey": 27,
+      "headers": [
+        {
+          "name": "Accept",
+          "value": "application/json"
+        }
+      ],
+      "parameters": [],
+      "body": {},
+      "authentication": {
+        "type": "bearer",
+        "token": "{{ _.token }}"
+      }
+    },
+    {
+      "_id": "req_readings_store",
+      "_type": "request",
+      "parentId": "fld_readings",
+      "name": "Registrar leitura (gera alertas)",
+      "method": "POST",
+      "url": "{{ _.monitoring_url }}/api/readings",
+      "description": "Temperatura ≥ 40 e atividade < 25 geram dois alertas de gravidade alta.",
+      "metaSortKey": 28,
+      "headers": [
+        {
+          "name": "Accept",
+          "value": "application/json"
+        },
+        {
+          "name": "Content-Type",
+          "value": "application/json"
+        }
+      ],
+      "parameters": [],
+      "body": {
+        "mimeType": "application/json",
+        "text": "{\n  \"animal_id\": 1,\n  \"recorded_at\": \"{% now 'iso-8601', '' %}\",\n  \"temperature\": 40.3,\n  \"activity_level\": 22,\n  \"feeding_level\": 70\n}"
+      },
+      "authentication": {
+        "type": "bearer",
+        "token": "{{ _.token }}"
+      }
+    },
+    {
+      "_id": "req_alerts_index",
+      "_type": "request",
+      "parentId": "fld_alerts",
+      "name": "Listar alertas",
+      "method": "GET",
+      "url": "{{ _.monitoring_url }}/api/alerts?status=Pendente&severity=&animal_id=&search=&per_page=15",
+      "description": "",
+      "metaSortKey": 29,
+      "headers": [
+        {
+          "name": "Accept",
+          "value": "application/json"
+        }
+      ],
+      "parameters": [],
+      "body": {},
+      "authentication": {
+        "type": "bearer",
+        "token": "{{ _.token }}"
+      }
+    },
+    {
+      "_id": "req_alerts_show",
+      "_type": "request",
+      "parentId": "fld_alerts",
+      "name": "Ver alerta (com histórico)",
+      "method": "GET",
+      "url": "{{ _.monitoring_url }}/api/alerts/{{ _.alert_id }}",
+      "description": "",
+      "metaSortKey": 30,
+      "headers": [
+        {
+          "name": "Accept",
+          "value": "application/json"
+        }
+      ],
+      "parameters": [],
+      "body": {},
+      "authentication": {
+        "type": "bearer",
+        "token": "{{ _.token }}"
+      }
+    },
+    {
+      "_id": "req_alerts_review",
+      "_type": "request",
+      "parentId": "fld_alerts",
+      "name": "Iniciar análise (Pendente → Em análise)",
+      "method": "PATCH",
+      "url": "{{ _.monitoring_url }}/api/alerts/{{ _.alert_id }}/status",
+      "description": "",
+      "metaSortKey": 31,
+      "headers": [
+        {
+          "name": "Accept",
+          "value": "application/json"
+        },
+        {
+          "name": "Content-Type",
+          "value": "application/json"
+        }
+      ],
+      "parameters": [],
+      "body": {
+        "mimeType": "application/json",
+        "text": "{\n  \"status\": \"Em análise\"\n}"
+      },
+      "authentication": {
+        "type": "bearer",
+        "token": "{{ _.token }}"
+      }
+    },
+    {
+      "_id": "req_alerts_resolve",
+      "_type": "request",
+      "parentId": "fld_alerts",
+      "name": "Resolver (Em análise → Resolvido)",
+      "method": "PATCH",
+      "url": "{{ _.monitoring_url }}/api/alerts/{{ _.alert_id }}/status",
+      "description": "",
+      "metaSortKey": 32,
+      "headers": [
+        {
+          "name": "Accept",
+          "value": "application/json"
+        },
+        {
+          "name": "Content-Type",
+          "value": "application/json"
+        }
+      ],
+      "parameters": [],
+      "body": {
+        "mimeType": "application/json",
+        "text": "{\n  \"status\": \"Resolvido\"\n}"
+      },
+      "authentication": {
+        "type": "bearer",
+        "token": "{{ _.token }}"
+      }
+    },
+    {
+      "_id": "req_alerts_skip",
+      "_type": "request",
+      "parentId": "fld_alerts",
+      "name": "Transição inválida (espera 422)",
+      "method": "PATCH",
+      "url": "{{ _.monitoring_url }}/api/alerts/{{ _.alert_id }}/status",
+      "description": "Num alerta Pendente, pular para Resolvido viola a RN01.",
+      "metaSortKey": 33,
+      "headers": [
+        {
+          "name": "Accept",
+          "value": "application/json"
+        },
+        {
+          "name": "Content-Type",
+          "value": "application/json"
+        }
+      ],
+      "parameters": [],
+      "body": {
+        "mimeType": "application/json",
+        "text": "{\n  \"status\": \"Resolvido\"\n}"
+      },
+      "authentication": {
+        "type": "bearer",
+        "token": "{{ _.token }}"
+      }
+    },
+    {
+      "_id": "req_alerts_reopen",
+      "_type": "request",
+      "parentId": "fld_alerts",
+      "name": "Reabrir (só de Resolvido)",
+      "method": "POST",
+      "url": "{{ _.monitoring_url }}/api/alerts/{{ _.alert_id }}/reopen",
+      "description": "",
+      "metaSortKey": 34,
+      "headers": [
+        {
+          "name": "Accept",
+          "value": "application/json"
+        }
+      ],
+      "parameters": [],
+      "body": {},
+      "authentication": {
+        "type": "bearer",
+        "token": "{{ _.token }}"
+      }
+    }
+  ]
+}

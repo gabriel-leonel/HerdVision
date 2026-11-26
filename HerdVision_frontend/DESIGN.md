@@ -573,12 +573,12 @@ Legenda de origem dos dados:
 
 ### 01 · Login
 
-**Objetivo:** autenticar com e-mail e senha ou com Google.
-**API:** ✅ `POST /api/auth/login` (`email`, `password`) → `user`, `access_token`, `token_type`, `expires_in`. Login social (Google SSO) 🕓.
+**Objetivo:** autenticar com e-mail e senha.
+**API:** ✅ `POST /api/auth/login` (`email`, `password`) → `user`, `access_token`, `token_type`, `expires_in`.
 
 **Conteúdo:**
 - Painel de marca: logo, overline "PECUÁRIA DE PRECISÃO", assinatura "Dados do rebanho em decisões inteligentes.", texto de apoio e motivo órbitas.
-- Formulário: título "Entrar", subtítulo, campo E-mail, campo Senha com "Mostrar senha", botão primário "Entrar", divisor "ou", botão secundário "Entrar com Google" (logotipo oficial do Google), link "Criar conta".
+- Formulário: título "Entrar", subtítulo, campo E-mail, campo Senha com "Mostrar senha", botão primário "Entrar", link "Criar conta".
 
 **Estados:**
 - Erro 401: banner de erro "Credenciais inválidas. Confira o e-mail e a senha." A mensagem é a mesma para e-mail inexistente e senha errada (o backend evita revelar quais e-mails existem).
@@ -597,7 +597,7 @@ Legenda de origem dos dados:
 - E-mail: obrigatório, válido e único. Erro: "Este e-mail já está cadastrado."
 - Senha: mínimo de 8 caracteres, com letras e números. A lista de requisitos marca cada item em tempo real.
 
-**Conteúdo:** mesmo layout do Login, assinatura "Rebanho sob controle.", link "Voltar para entrar", botões "Criar conta" e "Cadastrar com Google", e nota "Novas contas entram com o perfil Usuário. O perfil Administrador é atribuído pela equipe responsável."
+**Conteúdo:** mesmo layout do Login, assinatura "Rebanho sob controle.", link "Voltar para entrar", botão "Criar conta" e nota "Novas contas entram com o perfil Usuário. O perfil Administrador é atribuído pela equipe responsável."
 
 ---
 
@@ -822,7 +822,7 @@ O Figma define a identidade e os componentes com foco em mobile (390 × 844). Pa
 2. **Hex exato do vermelho pressionado** do botão destrutivo.
 3. **Valores de `animals.status`:** o backend só usa "ativo" nos dados de exemplo. As telas propõem Ativo, Em tratamento e Inativo.
 4. **Faixas de referência dos indicadores** (temperatura, atividade, alimentação) que geram os alertas e definem o destaque em vermelho no histórico.
-5. **Login social:** o significado de "2 login social (Google SSO)" ainda está em aberto no planejamento. As telas trazem apenas Google; um segundo provedor entra como outro botão secundário com o mesmo padrão.
+5. **Login social:** ~~em aberto~~ **decidido na Release 3: fora do produto.** Login social é só um ponto de complexidade opcional no enunciado; os botões de Google foram removidos do login e do cadastro.
 6. **Política de permissões do perfil `user`** para animais e protocolos ("conforme política definida" no planejamento). As telas seguem o padrão dos lotes: `user` cria e edita, só `admin` exclui.
 7. **Histórico de status do alerta:** o detalhe do alerta prevê a lista de mudanças. Isso depende da decisão sobre uma entidade de histórico (§12 do planejamento).
 8. **Escopo multi-propriedade:** a overline do Dashboard mostra o nome da propriedade. Se o sistema tiver uma única propriedade, a overline vira só a data.

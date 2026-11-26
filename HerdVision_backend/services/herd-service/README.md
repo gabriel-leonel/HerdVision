@@ -58,17 +58,63 @@ Envie `Authorization: Bearer <access_token>` (obtido em `POST /api/auth/login` n
 
 Todos exigem `Authorization: Bearer <token>`. Respostas de erro seguem `{"message": "..."}` (e `errors` nos 422).
 
+Matriz de permissões: consultar = admin e user · criar/editar = admin e user · **excluir lote, animal e protocolo = só admin**. Listagens aceitam `per_page` (1–100, padrão 15) e devolvem paginação do Laravel (`data`, `links`, `meta`).
+
 ### Lotes (`/api/lots`)
 
 | Método | Rota | Quem pode | Descrição |
 |---|---|---|---|
-| GET | `/api/lots` | admin, user | Lista com `search` (nome/descrição), `per_page` (1–100, padrão 15) e paginação. Cada lote traz `animals_count` |
+| GET | `/api/lots` | admin, user | `search` (nome/descrição). Cada lote traz `animals_count` |
 | GET | `/api/lots/{id}` | admin, user | Consulta um lote |
-| POST | `/api/lots` | admin, user | Cria. Campos: `name` (obrigatório, máx. 255), `description` (opcional) |
-| PUT/PATCH | `/api/lots/{id}` | admin, user | Atualização parcial: só os campos enviados mudam (`"description": null` limpa a descrição) |
-| DELETE | `/api/lots/{id}` | **admin** | Exclui (204). Lote com animais responde **409** com `animals_count` |
+| POST | `/api/lots` | admin, user | `name` (obrigatório, máx. 255), `description` (opcional) |
+| PUT/PATCH | `/api/lots/{id}` | admin, user | Atualização parcial (`"description": null` limpa) |
+| DELETE | `/api/lots/{id}` | **admin** | 204. Lote com animais → **409** com `animals_count` |
 
-Códigos: `401` sem token ou token inválido · `403` perfil sem permissão · `404` lote inexistente · `409` lote com animais · `422` validação.
+### Animais (`/api/animals`)
+
+| Método | Rota | Quem pode | Descrição |
+|---|---|---|---|
+| GET | `/api/animals` | admin, user | `search` (identificação, nome, raça), filtros `lot_id` e `status`. Traz `lot: {id, name}` |
+| GET | `/api/animals/{id}` | admin, user | Consulta um animal |
+| POST | `/api/animals` | admin, user | `identification` (obrigatório, único), `species` (`Bovino`, `Bubalino`, `Ovino`, `Caprino`, `Equino`), `status` (`ativo`, `em tratamento`, `inativo`), `lot_id` (existente), `birth_date` (`AAAA-MM-DD`, não futura), `name`/`breed` opcionais |
+| PUT/PATCH | `/api/animals/{id}` | admin, user | Atualização parcial |
+| DELETE | `/api/animals/{id}` | **admin** | 204. Apaga junto as aplicações de protocolo; leituras e alertas do monitoring ficam preservados |
+
+### Protocolos de manejo (`/api/protocols`)
+
+| Método | Rota | Quem pode | Descrição |
+|---|---|---|---|
+| GET | `/api/protocols` | admin, user | `search` (nome/descrição), filtros `type` e `active` (`true`/`false`). Traz `animals_count` (animais distintos) |
+| GET | `/api/protocols/{id}` | admin, user | Consulta um protocolo |
+| POST | `/api/protocols` | admin, user | `name`, `type` (`sanitário`, `nutricional`, `reprodutivo`), `description`, `active` (padrão `true`) |
+| PUT/PATCH | `/api/protocols/{id}` | admin, user | Atualização parcial. Desativar = `"active": false` |
+| DELETE | `/api/protocols/{id}` | **admin** | 204. Protocolo já aplicado → **409** (desative em vez de excluir) |
+
+### Associação animal ↔ protocolo (`/api/animal-protocols`)
+
+| Método | Rota | Quem pode | Descrição |
+|---|---|---|---|
+| GET | `/api/animal-protocols` | admin, user | Filtros `animal_id` e `management_protocol_id`; mais recentes primeiro. Traz `animal` e `protocol` |
+| POST | `/api/animal-protocols` | admin, user | `animal_id`, `management_protocol_id`, `start_date`, `status` (`em andamento`, `concluído`). Protocolo **inativo → 422** |
+| PATCH | `/api/animal-protocols/{id}` | admin, user | Só `start_date` e `status` (concluir/reabrir) |
+| DELETE | `/api/animal-protocols/{id}` | admin, user | Desvincula (não apaga animal nem protocolo) |
+
+Códigos: `401` sem token ou token inválido · `403` perfil sem permissão · `404` inexistente · `409` exclusão bloqueada · `422` validação.
+
+## Documentação da API (Swagger/OpenAPI)
+
+Gerada automaticamente pelo [Scramble](https://scramble.dedoc.co) a partir das rotas, Form Requests e Resources (OpenAPI 3.1). Pública, sem login:
+
+| Ambiente | Interface | Especificação JSON |
+|---|---|---|
+| Local | http://localhost:8001/docs/api | http://localhost:8001/docs/api.json |
+| Produção | https://herd-service-dy54.onrender.com/docs/api | https://herd-service-dy54.onrender.com/docs/api.json |
+
+Para testar pela interface, use **Authorize** com o `access_token` de `POST /api/auth/login` (auth-service). As respostas 401/403 dos middlewares `jwt`/`role` também são documentadas.
+
+## Dados de demonstração
+
+`php artisan db:seed` cria 3 lotes, 12 animais (IDs **1 a 12**), 5 protocolos (1 inativo) e 10 aplicações. É idempotente (não faz nada se já houver lotes). No container, defina `SEED_DEMO_DATA=true`. O seed do monitoring-service usa esses IDs de animais.
 
 ## Banco de dados
 

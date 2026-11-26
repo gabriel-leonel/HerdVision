@@ -12,4 +12,11 @@ fi
 
 php artisan migrate --force
 
+# Dados de demonstração (lotes, animais, protocolos). Opt-in e idempotente:
+# com o SQLite efêmero do Render, o banco volta a este estado a cada deploy.
+# O seed do monitoring-service usa os IDs de animais criados aqui.
+if [ "${SEED_DEMO_DATA:-false}" = "true" ]; then
+    php artisan db:seed --force
+fi
+
 exec php artisan serve --host=0.0.0.0 --port="${PORT:-10000}"

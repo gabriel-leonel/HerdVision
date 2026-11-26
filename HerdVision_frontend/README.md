@@ -72,5 +72,5 @@ src/
 - **Permissões na interface:** excluir (lotes, animais, protocolos) e o menu Usuários só aparecem para `admin`. O backend continua sendo a fonte da verdade.
 - **Valores a confirmar** (DESIGN.md §13.2), centralizados em [src/lib/semantics.ts](src/lib/semantics.ts): `animals.status` (`ativo`, `em tratamento`, `inativo`), tipos de protocolo, status da associação, faixa de temperatura (37,5–39,5 °C) e limite de atividade/alimentação (40).
 - **Histórico do alerta:** exibido se a API devolver `history`; caso contrário, mostra criação e última alteração.
-- **Login com Google:** botão presente; mostra aviso até o fluxo SSO existir.
+- **Login social:** fora do escopo do produto (decisão da Release 3); entrada só por e-mail e senha.
 - **Deploy (Vercel):** `vercel.json` redireciona todas as rotas para o `index.html` (SPA).

@@ -1,20 +1,17 @@
 import { useEffect, useRef, useState, type FormEvent } from 'react';
 import { Link, useLocation, useNavigate, useSearchParams } from 'react-router-dom';
 import { useAuth } from '../auth/AuthContext';
-import { GoogleLogo } from '../components/Brand';
 import { Button } from '../components/Button';
 import { Banner } from '../components/Feedback';
 import { PasswordField, TextField } from '../components/Field';
 import { DEMO_CREDENTIALS } from '../api/mock/seed';
 import { isMockMode } from '../lib/config';
 import { isApiError } from '../lib/http';
-import { useToast } from '../components/Feedback';
 
 export function LoginPage() {
   const { login } = useAuth();
   const navigate = useNavigate();
   const location = useLocation();
-  const toast = useToast();
   const [params] = useSearchParams();
   const sessionExpired = params.get('sessao') === 'expirada';
 
@@ -103,13 +100,6 @@ export function LoginPage() {
           {submitting ? 'Entrando…' : 'Entrar'}
         </Button>
       </form>
-
-      <p className="auth__divider">ou</p>
-
-      <Button variant="secondary" block onClick={() => toast.info('O login com Google estará disponível em breve.')}>
-        <GoogleLogo />
-        Entrar com Google
-      </Button>
 
       <p className="auth__switch">
         Ainda não tem conta? <Link to="/cadastro">Criar conta</Link>

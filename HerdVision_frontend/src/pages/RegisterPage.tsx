@@ -1,7 +1,6 @@
 import { useEffect, useRef, useState, type ChangeEvent, type FormEvent } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 import { useAuth } from '../auth/AuthContext';
-import { GoogleLogo } from '../components/Brand';
 import { Button } from '../components/Button';
 import { Banner, Footnote, useToast } from '../components/Feedback';
 import { PasswordField, RequiredLegend, TextField } from '../components/Field';
@@ -157,13 +156,6 @@ export function RegisterPage() {
           {submitting ? 'Criando conta…' : 'Criar conta'}
         </Button>
       </form>
-
-      <p className="auth__divider">ou</p>
-
-      <Button variant="secondary" block onClick={() => toast.info('O cadastro com Google estará disponível em breve.')}>
-        <GoogleLogo />
-        Cadastrar com Google
-      </Button>
 
       <Footnote icon="shield">
         Novas contas entram com o perfil Usuário. O perfil Administrador é atribuído pela equipe responsável.

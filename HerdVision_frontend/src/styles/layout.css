@@ -286,20 +286,6 @@
   width: 100%;
   max-width: 420px;
 }
-.auth__divider {
-  display: flex;
-  align-items: center;
-  gap: 12px;
-  color: var(--bark-500);
-  font-size: 13px;
-}
-.auth__divider::before,
-.auth__divider::after {
-  content: '';
-  flex: 1;
-  height: 1px;
-  background: var(--sand-200);
-}
 .auth__switch {
   text-align: center;
   color: var(--bark-700);

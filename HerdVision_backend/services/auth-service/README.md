@@ -50,6 +50,17 @@ Resposta de `register`/`login`:
 }
 ```
 
+## Documentação da API (Swagger/OpenAPI)
+
+Gerada automaticamente pelo [Scramble](https://scramble.dedoc.co) a partir das rotas, Form Requests e Resources (OpenAPI 3.1). Pública, sem login:
+
+| Ambiente | Interface | Especificação JSON |
+|---|---|---|
+| Local | http://localhost:8000/docs/api | http://localhost:8000/docs/api.json |
+| Produção | https://auth-service-od2h.onrender.com/docs/api | https://auth-service-od2h.onrender.com/docs/api.json |
+
+Para testar pela interface, use **Authorize** com o `access_token` de `POST /api/auth/login` (auth-service). As respostas 401/403 dos middlewares `jwt`/`role` também são documentadas.
+
 ## Como o JWT funciona
 
 - **Assinatura RS256**: só o auth-service tem a **chave privada** e emite tokens.
