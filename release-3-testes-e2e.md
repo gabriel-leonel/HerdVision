@@ -259,6 +259,7 @@ Preencher a cada rodada (✅ passou, ❌ falhou, ⏭ não executado):
 |---|---|---|---|---|---|
 | 2026-11-26 (03:25–03:47 BRT) | produção | `19d405d` | Claude (Playwright MCP) | 85 ✅ · 1 ⚠ · 1 ❌ de 87 casos | ANI-06 ❌ · ALR-03 ⚠ |
 | 2026-11-26 (12:30 BRT, reteste) | produção | `fcecc00` | Claude (Playwright MCP) | ANI-06 ✅ · ALR-03 ✅ (87 de 87) | --- |
+| 2026-11-26 (13:05–13:30 BRT, regressão completa) | produção | `6b68fd5` | Claude (Playwright MCP, scripts) | 87 ✅ de 87 | --- |
 
 ### 5.1. Rodada de 2026-11-26: detalhes
 
@@ -296,7 +297,17 @@ reiniciado.
 - ALR-04 a 08: o histórico é exibido do mais recente para o mais antigo.
 - NAV-01: `/login` e `/cadastro` com sessão ativa redirecionam para `/` (o conteúdo delas foi validado sem sessão em AUTH-01/02). Nenhuma resposta 5xx; o console só tem os dois avisos de *future flags* do React Router.
 
-**Resultado por caso**
+**Regressão completa (6b68fd5)**
+
+Os 87 casos foram reexecutados sobre o seed recém-implantado (carimbo
+`1126B`) com scripts Playwright em 4 partes (AUTH/DASH; LOT/ANI/PRO/ASSOC/
+API do user; READ/ALR/RN01; exclusões do admin, USR e NAV), mais DOC por
+`curl`. Todos passaram. Na mesma data, `php artisan test` passou nos três
+serviços (auth 47, herd 161, monitoring 126) com `pint` limpo, e `npm test`
+passou no frontend (21). Ao final, herd e monitoring foram redeployados
+para voltar ao seed; a conta `e2e+1126b@herdvision.dev` ficou no auth.
+
+**Resultado por caso (primeira rodada, 19d405d)**
 
 | Bloco | Casos |
 |---|---|

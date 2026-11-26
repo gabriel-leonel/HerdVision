@@ -501,9 +501,9 @@ pelo menos 4 concluídos.
 
   Item (enunciado)                        Pontos   Release   Situação
   --------------------------------------- -------- --------- -------------------------------------
-  Backend em microsserviços               3        R3        auth e herd no ar; falta monitoring
-  Testes automatizados (mín. 10)          2        R3        ~150 testes no backend + 21 no front
-  Documentação da API (Swagger/OpenAPI)   1        R3        a fazer
+  Backend em microsserviços               3        R3        ✅ três serviços no ar (Render)
+  Testes automatizados (mín. 10)          2        R3        ✅ 334 no backend + 21 no front
+  Documentação da API (Swagger/OpenAPI)   1        R3        ✅ `/docs/api` nos três serviços
   CI/CD: deploy automático a cada push    3        R4        auto-deploy existe, sem validação
   **Total**                               **9**
 
@@ -546,20 +546,20 @@ herd (`asAdmin()`, `asUser()`, par RSA efêmero):
 
 Checklist:
 
--   [ ] Dockerfile e `docker-entrypoint.sh` do monitoring-service (mesmo
+-   [x] Dockerfile e `docker-entrypoint.sh` do monitoring-service (mesmo
     padrão de auth/herd).
--   [ ] Serviço `monitoring-service` no Render, auto-deploy da `main`,
+-   [x] Serviço `monitoring-service` no Render, auto-deploy da `main`,
     com `JWT_PUBLIC_KEY`, `JWT_ISSUER`, `HERD_API_URL`,
     `CORS_ALLOWED_ORIGINS`, `APP_DEBUG=false`.
--   [ ] `VITE_MONITORING_API_URL` configurada na Vercel e novo deploy do
+-   [x] `VITE_MONITORING_API_URL` configurada na Vercel e novo deploy do
     frontend.
--   [ ] Seeders de demonstração no herd (lotes, animais, protocolos,
+-   [x] Seeders de demonstração no herd (lotes, animais, protocolos,
     associações) e no monitoring (leituras e alertas em vários status),
     ligados por variável de ambiente como o `SEED_DEMO_USERS` do auth.
     Necessário porque o SQLite do Render free é efêmero: os dados voltam
     ao estado do seed a cada deploy/reinício.
--   [ ] Fluxos validados na URL pública com admin e user.
--   [ ] Coleção do Insomnia (`insomnia/`) atualizada com as novas rotas.
+-   [x] Fluxos validados na URL pública com admin e user.
+-   [x] Coleção do Insomnia (`insomnia/`) atualizada com as novas rotas.
 
 **Atenção:** os IDs de animais do seed do monitoring precisam bater com
 os do seed do herd. Semear o herd primeiro e usar IDs fixos.
@@ -568,18 +568,18 @@ os do seed do herd. Semear o herd primeiro e usar IDs fixos.
 
 A Release 3 será considerada entregue quando houver:
 
--   [ ] CRUD completo de Lotes, Animais e Protocolos pela interface.
--   [ ] Relacionamentos 1:N (Lote → Animal) e N:N (Animal ↔ Protocolo)
+-   [x] CRUD completo de Lotes, Animais e Protocolos pela interface.
+-   [x] Relacionamentos 1:N (Lote → Animal) e N:N (Animal ↔ Protocolo)
     funcionando pela interface.
--   [ ] Monitoring Service publicado e consumido pelo frontend.
--   [ ] Registro de leituras com geração automática de alertas.
--   [ ] RN01 validada no backend, com reabertura explícita e histórico.
--   [ ] Matriz de permissões aplicada e testada em todos os endpoints.
--   [ ] Busca/filtro e paginação nas listagens.
--   [ ] As 11 telas funcionando contra a API real.
--   [ ] Botões de Google SSO removidos.
--   [ ] Swagger publicado nos três serviços.
--   [ ] Testes passando nos três serviços e no frontend.
+-   [x] Monitoring Service publicado e consumido pelo frontend.
+-   [x] Registro de leituras com geração automática de alertas.
+-   [x] RN01 validada no backend, com reabertura explícita e histórico.
+-   [x] Matriz de permissões aplicada e testada em todos os endpoints.
+-   [x] Busca/filtro e paginação nas listagens.
+-   [x] As 11 telas funcionando contra a API real.
+-   [x] Botões de Google SSO removidos.
+-   [x] Swagger publicado nos três serviços.
+-   [x] Testes passando nos três serviços e no frontend.
 -   [ ] Demonstração ao vivo preparada (admin e user).
 -   [ ] Tag Git `v0.3` criada e enviada ao repositório remoto.
 
