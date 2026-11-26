@@ -14,6 +14,6 @@ class ExampleTest extends TestCase
     {
         $response = $this->get('/');
 
-        $response->assertStatus(418); // quebrado de propósito: validação do CI (R4, §5.5)
+        $response->assertStatus(200);
     }
 }
