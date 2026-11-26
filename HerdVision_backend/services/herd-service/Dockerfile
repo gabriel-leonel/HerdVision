@@ -21,6 +21,9 @@ RUN mkdir -p storage/framework/cache \
     bootstrap/cache \
     && chmod -R 775 storage bootstrap/cache
 
+RUN chmod +x docker-entrypoint.sh
+
 EXPOSE 10000
 
-CMD php artisan serve --host=0.0.0.0 --port=${PORT:-10000}
+# Cria o SQLite, roda as migrations e sobe o servidor.
+CMD ["./docker-entrypoint.sh"]
