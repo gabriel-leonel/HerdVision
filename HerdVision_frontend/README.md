@@ -1,6 +1,6 @@
 # HerdVision — Frontend
 
-Aplicação web da HerdVision (React 18 + TypeScript + Vite + React Router). Segue o [DESIGN.md](DESIGN.md) (tokens, componentes e as 11 telas) e consome os três microsserviços descritos em `herdvision_planning.md` e `release-2-fundacao.md`.
+Aplicação web da HerdVision (React 18 + TypeScript + Vite + React Router). Segue o [DESIGN.md](DESIGN.md) (tokens, componentes e as 11 telas) e consome os três microsserviços descritos em [docs/herdvision_planning.md](../docs/herdvision_planning.md) e [docs/release-2-fundacao.md](../docs/release-2-fundacao.md).
 
 ## Executar
 

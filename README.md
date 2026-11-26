@@ -80,8 +80,8 @@ HerdVision_backend/services/
   monitoring-service/           MS3 — Laravel 13
 HerdVision_frontend/            React + Vite + TypeScript
 insomnia/                       coleção de requisições da API
-herdvision_planning.md          planejamento (RF, RNF, entidades, telas, RN01)
-release-*.md                    escopo de cada release e roteiro de testes E2E
+docs/                           planejamento (RF, RNF, entidades, telas, RN01),
+                                escopo de cada release e roteiro de testes E2E
 ```
 
 ## Tecnologias
@@ -176,7 +176,7 @@ A coleção do Insomnia em [insomnia/herdvision-r3.insomnia.json](insomnia/herdv
 
 Os testes do backend usam SQLite em memória e geram um par RSA efêmero, então não precisam de banco nem de chaves. O estilo do PHP é verificado com `vendor/bin/pint --test`, e o TypeScript com `npm run typecheck`.
 
-**Testes E2E:** o roteiro [release-3-testes-e2e.md](release-3-testes-e2e.md) tem **87 casos** (telas, permissões, RN01 e chamadas diretas à API), executados com o Playwright contra a produção. Última rodada (regressão final da `v1.0`): **87/87**.
+**Testes E2E:** o roteiro [docs/release-3-testes-e2e.md](docs/release-3-testes-e2e.md) tem **87 casos** (telas, permissões, RN01 e chamadas diretas à API), executados com o Playwright contra a produção. Última rodada (regressão final da `v1.0`): **87/87**.
 
 ## CI/CD
 
@@ -236,7 +236,7 @@ A equipe usou o **Claude** (Anthropic), principalmente pelo **Claude Code** no t
 
 | Etapa | Como a IA foi usada | O que a equipe revisou ou decidiu |
 |---|---|---|
-| Planejamento | Redação dos documentos de escopo (`herdvision_planning.md`, `release-*.md`): requisitos, entidades, matriz de permissões, divisão em releases e riscos. | Escopo de cada release, prioridades, cortes (ex.: login social e persistência real fora do produto) e critérios de aceite. |
+| Planejamento | Redação dos documentos de escopo em [docs/](docs/): requisitos, entidades, matriz de permissões, divisão em releases e riscos. | Escopo de cada release, prioridades, cortes (ex.: login social e persistência real fora do produto) e critérios de aceite. |
 | Desenvolvimento | Geração e refatoração de código dos três serviços Laravel (rotas, Form Requests, Resources, middlewares JWT, RN01) e das telas React, seguindo o `DESIGN.md`. | Leitura de cada mudança, padrões de API, mensagens em pt_BR e permissões por perfil. |
 | Testes | Escrita dos testes PHPUnit e Vitest, e execução do roteiro E2E com o Playwright (via MCP) contra a produção, com registro dos resultados. | Casos do roteiro, análise dos achados e decisão do que corrigir. |
 | Deploy e CI/CD | Dockerfiles, configuração do Render e da Vercel, e o workflow do GitHub Actions. | Variáveis e segredos de produção (configurados pela equipe) e validação do deploy. |
