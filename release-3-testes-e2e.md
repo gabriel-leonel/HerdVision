@@ -258,6 +258,7 @@ Preencher a cada rodada (✅ passou, ❌ falhou, ⏭ não executado):
 | Data | Ambiente | Commit | Executado por | Resultado | Falhas (IDs) |
 |---|---|---|---|---|---|
 | 2026-11-26 (03:25–03:47 BRT) | produção | `19d405d` | Claude (Playwright MCP) | 85 ✅ · 1 ⚠ · 1 ❌ de 87 casos | ANI-06 ❌ · ALR-03 ⚠ |
+| 2026-11-26 (12:30 BRT, reteste) | produção | `fcecc00` | Claude (Playwright MCP) | ANI-06 ✅ · ALR-03 ✅ (87 de 87) | --- |
 
 ### 5.1. Rodada de 2026-11-26: detalhes
 
@@ -279,7 +280,7 @@ reiniciado.
 **Correções (2026-11-26, depois da rodada)**
 
 - ANI-06: `APP_LOCALE=pt_BR` definido no Render para o herd-service e o auth-service (redeploy automático). Os dois passaram a responder as validações em português. ANI-06 reexecutado pela tela em produção: "Já existe um animal com esta identificação." ✅. Efeito colateral: o redeploy do auth zerou o banco de usuários e recriou só os demos, então a conta E2E sumiu.
-- ALR-03: campo "Buscar alerta" adicionado à Central (`AlertsPage.tsx`, parâmetro `?busca=` → `search` da API). Ele filtra a lista e as contagens dos chips e é limpo por "Limpar filtros". Na mesma mudança, a seleção automática do primeiro alerta (telas ≥ 1200 px) passou a esperar a lista do filtro atual; antes, ao trocar de filtro, ela podia abrir um alerta da lista anterior. Validado no modo mock; em produção depende do deploy do front.
+- ALR-03: campo "Buscar alerta" adicionado à Central (`AlertsPage.tsx`, parâmetro `?busca=` → `search` da API). Ele filtra a lista e as contagens dos chips e é limpo por "Limpar filtros". Na mesma mudança, a seleção automática do primeiro alerta (telas ≥ 1200 px) passou a esperar a lista do filtro atual; antes, ao trocar de filtro, ela podia abrir um alerta da lista anterior. Validado no modo mock e, depois do deploy de `fcecc00`, em produção: "cocho" retorna BUF001 e BR3002 (chips 2 / 1 Pendente / 1 Em análise) e o detalhe abre o primeiro da lista filtrada; "Gravidade = alta" retorna 4 alertas, todos Crítico.
 
 **Passou, com divergência de texto ou adaptação** (atualizar o roteiro ou a tela):
 
