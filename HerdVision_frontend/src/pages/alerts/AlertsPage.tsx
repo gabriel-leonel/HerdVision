@@ -5,8 +5,9 @@ import type { AlertStatus } from '../../api/types';
 import { Button } from '../../components/Button';
 import { AlertCard, ChipGroup, PageHeader, Pagination } from '../../components/Data';
 import { EmptyState, ErrorState, Footnote, SkeletonRows, VET_NOTE } from '../../components/Feedback';
-import { SelectField } from '../../components/Field';
+import { SearchField, SelectField } from '../../components/Field';
 import { useAsync, useQueryState } from '../../hooks/useAsync';
+import { useSearchInput } from '../../hooks/useSearchInput';
 import { formatNumber, plural } from '../../lib/format';
 import { ALERT_STATUSES, ALERT_STATUS_META, SEVERITY } from '../../lib/semantics';
 import { useAlertCount } from '../../layouts/AppLayout';
@@ -15,7 +16,8 @@ import { AlertDetail } from './AlertDetail';
 const PER_PAGE = 10;
 
 export function AlertsPage() {
-  const [query, setQuery] = useQueryState({ status: '', gravidade: '', pagina: '1', alerta: '' });
+  const [query, setQuery] = useQueryState({ busca: '', status: '', gravidade: '', pagina: '1', alerta: '' });
+  const [search, setSearch] = useSearchInput(query.busca, (busca) => setQuery({ busca, alerta: '' }));
   const { refresh: refreshSidebar } = useAlertCount();
   const detailRef = useRef<HTMLElement>(null);
 
@@ -24,32 +26,38 @@ export function AlertsPage() {
   }, []);
 
   const counts = useAsync(async () => {
-    const values = await Promise.all(ALERT_STATUSES.map((status) => alertsApi.count({ status, severity: query.gravidade })));
+    const values = await Promise.all(ALERT_STATUSES.map((status) => alertsApi.count({ status, severity: query.gravidade, search: query.busca })));
     const byStatus = Object.fromEntries(ALERT_STATUSES.map((s, i) => [s, values[i]])) as Record<AlertStatus, number>;
     return { ...byStatus, total: values.reduce((a, b) => a + b, 0) };
-  }, [query.gravidade]);
+  }, [query.gravidade, query.busca]);
 
+  // Filtros que geraram a lista exibida; evita agir sobre a lista anterior enquanto a nova carrega.
+  const listKey = [query.status, query.gravidade, query.busca, query.pagina].join('|');
   const list = useAsync(async () => {
+    const key = listKey;
     const page = await alertsApi.list({
       status: query.status as AlertStatus | '',
       severity: query.gravidade,
+      search: query.busca,
       page: Number(query.pagina),
       per_page: PER_PAGE,
     });
     const animals = await getAnimalsByIds(page.data.map((a) => a.animal_id));
-    return { page, animals };
-  }, [query.status, query.gravidade, query.pagina]);
+    return { page, animals, key };
+  }, [query.status, query.gravidade, query.busca, query.pagina]);
 
   const alerts = list.data?.page.data ?? [];
   const meta = list.data?.page.meta;
   const selectedId = query.alerta ? Number(query.alerta) : null;
 
   // Em telas largas, abre o primeiro alerta da lista quando nada está selecionado.
+  // Espera a lista do filtro atual carregar, para não abrir um alerta da lista anterior.
+  const listIsCurrent = list.data?.key === listKey;
   useEffect(() => {
-    if (!selectedId && alerts.length > 0 && window.matchMedia('(min-width: 1200px)').matches) {
+    if (listIsCurrent && !selectedId && alerts.length > 0 && window.matchMedia('(min-width: 1200px)').matches) {
       setQuery({ alerta: String(alerts[0].id) }, { keepPage: true });
     }
-  }, [alerts, selectedId, setQuery]);
+  }, [listIsCurrent, alerts, selectedId, setQuery]);
 
   useEffect(() => {
     if (meta && alerts.length === 0 && meta.current_page > 1) setQuery({ pagina: String(Math.max(1, meta.last_page)) }, { keepPage: true });
@@ -77,7 +85,14 @@ export function AlertsPage() {
       />
 
       <div className="stack-24">
-        <div className="filter-bar">
+        <div className="filter-bar" role="search">
+          <SearchField
+            label="Buscar alerta"
+            placeholder="Descrição ou tipo"
+            value={search}
+            onChange={(e) => setSearch(e.target.value)}
+            fieldClassName="filter-bar__search"
+          />
           <div className="filter-bar__chips">
             <ChipGroup
               label="Status"
@@ -111,12 +126,12 @@ export function AlertsPage() {
               </div>
             ) : alerts.length === 0 ? (
               <div className="card">
-                {query.status || query.gravidade ? (
+                {query.busca || query.status || query.gravidade ? (
                   <EmptyState
                     icon="search"
                     title="Nenhum alerta com estes filtros"
                     actions={
-                      <Button variant="tertiary" size="page" onClick={() => setQuery({ status: '', gravidade: '', alerta: '' })}>
+                      <Button variant="tertiary" size="page" onClick={() => setQuery({ busca: '', status: '', gravidade: '', alerta: '' })}>
                         Limpar filtros
                       </Button>
                     }
