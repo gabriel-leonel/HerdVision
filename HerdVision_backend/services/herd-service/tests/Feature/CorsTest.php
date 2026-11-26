@@ -51,4 +51,32 @@ class CorsTest extends TestCase
             'HTTP_ACCESS_CONTROL_REQUEST_METHOD' => 'POST',
         ])->assertHeader('Access-Control-Allow-Origin', 'https://app.herdvision.example');
     }
+
+    public function test_vercel_preview_origins_are_allowed_by_pattern(): void
+    {
+        config(['cors.allowed_origins' => ['https://herdvision-frontend.vercel.app']]);
+        config(['cors.allowed_origins_patterns' => ['#^https://herdvision-frontend-[a-z0-9-]+-catateras-projects\\.vercel\\.app$#']]);
+
+        $preview = 'https://herdvision-frontend-diwxb0r59-catateras-projects.vercel.app';
+
+        $this->call('OPTIONS', '/api/_test/protected', server: [
+            'HTTP_ORIGIN' => $preview,
+            'HTTP_ACCESS_CONTROL_REQUEST_METHOD' => 'GET',
+        ])->assertHeader('Access-Control-Allow-Origin', $preview);
+    }
+
+    public function test_pattern_does_not_allow_lookalike_domains(): void
+    {
+        config(['cors.allowed_origins' => ['https://herdvision-frontend.vercel.app']]);
+        config(['cors.allowed_origins_patterns' => ['#^https://herdvision-frontend-[a-z0-9-]+-catateras-projects\\.vercel\\.app$#']]);
+
+        $evil = 'https://herdvision-frontend-x-catateras-projects.vercel.app.evil.example';
+
+        $allowed = $this->call('OPTIONS', '/api/_test/protected', server: [
+            'HTTP_ORIGIN' => $evil,
+            'HTTP_ACCESS_CONTROL_REQUEST_METHOD' => 'GET',
+        ])->headers->get('Access-Control-Allow-Origin');
+
+        $this->assertNotSame($evil, $allowed);
+    }
 }
